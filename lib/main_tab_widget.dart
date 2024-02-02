@@ -20,7 +20,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.add),
-            label: "Check In",
+            label: "Add Entry",
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.list_bullet),
