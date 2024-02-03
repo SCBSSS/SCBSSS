@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class JournalEntry {
   final int id; // Unique identifier for each journal entry
   final int mood; // Mood rating from 1 to 5
