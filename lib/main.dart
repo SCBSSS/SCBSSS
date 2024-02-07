@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'main_tab_widget.dart';
-import 'setup_wizard.dart';
+import 'package:scbsss/main_tab_widget.dart';
+import 'package:scbsss/setup_wizard.dart';
 
 void main() {
   runApp(const MyApp());
