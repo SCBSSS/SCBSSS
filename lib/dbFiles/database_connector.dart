@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
   static Future<void> createTables(sql.Database db) async {
@@ -57,6 +58,19 @@ class DatabaseHelper {
            category VARCHAR(20) NOT NULL,
            audio_file_url VARCHAR(500)
          );"""
+    );
+  }
+
+  static Future<sql.Database> getDatabase() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final dbPath = join(directory.path, 'scbsss_db.db');
+    return sql.openDatabase(
+      dbPath,
+      onCreate: (db, version) {
+        // called if db doesn't exist and is being created
+        createTables(db);
+      },
+      version: 1, // we will increment this whenever we make different schemas
     );
   }
 }
