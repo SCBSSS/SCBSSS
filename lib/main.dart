@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scbsss/main_tab_widget.dart';
 import 'package:scbsss/setup_wizard.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:scbsss/dbFiles/database_connector.dart';
 
 void main() {
   runApp(const MyApp());
