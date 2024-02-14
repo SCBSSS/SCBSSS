@@ -34,14 +34,6 @@ class DatabaseHelper {
           title TEXT,
           entry TEXT,
           date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          FOREIGN KEY(recording_id) REFERENCES recordings(id) 
-      );
-
-      CREATE TABLE recordings (
-          id INTEGER PRIMARY KEY,
-          audio_file_path TEXT NOT NULL,
-          duration REAL NOT NULL,
-          transcription TEXT
       );
 
       CREATE TABLE meditation (
@@ -55,7 +47,6 @@ class DatabaseHelper {
         reverseSql: '''
             DROP TABLE meditation;
             DROP TABLE mood_entries;
-            DROP TABLE recordings;
             DROP TABLE user_activity;
             DROP TABLE settings;
             DROP TABLE users;
