@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scbsss/main_tab_widget.dart';
 import 'package:scbsss/setup_wizard.dart';
-import 'package:scbsss/dbFiles/database_connector.dart';
+import 'package:scbsss/services/database_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeDatabase() async {
-    await DatabaseHelper.getDatabase(); // initializing scbsss_db
+    await DatabaseService.getDatabase(); // initializing scbsss_db
     setState(() {
       isLoading = false; // update loading state
     });

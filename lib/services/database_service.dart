@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_migration_plan/migration/sql.dart';
 import 'package:sqflite_migration_plan/sqflite_migration_plan.dart';
 
-class DatabaseHelper {
+class DatabaseService {
   static MigrationPlan migrationPlan = MigrationPlan({
     1: [
       SqlMigration(
