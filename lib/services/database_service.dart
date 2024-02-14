@@ -26,7 +26,6 @@ class DatabaseService {
       await Directory(databasesPath).create(recursive: true);
     } catch (_) {}
 
-    databaseFactory.deleteDatabase(dbPath);
     return await openDatabase(
       dbPath,
       version: 5,
