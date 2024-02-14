@@ -49,7 +49,6 @@ class DatabaseHelper {
             DROP TABLE mood_entries;
             DROP TABLE user_activity;
             DROP TABLE settings;
-            DROP TABLE users;
           ''',
       )
     ]
