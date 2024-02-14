@@ -31,7 +31,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeDatabase() async {
-    await DatabaseService.getDatabase(); // initializing scbsss_db
+    await DatabaseService.instance.database; // wait for db to get initalized
+
     setState(() {
       isLoading = false; // update loading state
     });
