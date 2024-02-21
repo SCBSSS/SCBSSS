@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
-import 'package:scbsss/models/mood_entry.dart';
+import '../models/journal_entry.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration_plan/migration/sql.dart';
 import 'package:sqflite_migration_plan/sqflite_migration_plan.dart';
@@ -106,17 +106,17 @@ class DatabaseService {
       ],
     });
 
-  Future<void> insertMoodEntry(MoodEntry moodEntry) async {
+  Future<void> insertMoodEntry(JournalEntry moodEntry) async {
     final db = await instance.database;
 
     await db.insert('mood_entries', moodEntry.toMapDbString());
   }
 
-  Future<List<MoodEntry>> getMoodEntry() async {
+  Future<List<JournalEntry>> getMoodEntry() async {
     final db = await instance.database;
 
     final List<Map<String, dynamic>> result = await db.query('mood_entries');
 
-    return List.generate(result.length, (index) => MoodEntry.fromMap(result[index]));
+    return List.generate(result.length, (index) => JournalEntry.fromMap(result[index]));
   }
 }

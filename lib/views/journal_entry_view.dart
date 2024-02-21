@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
 
 class JournalEntryView extends StatelessWidget {
-  JournalEntry entry;
+  final JournalEntry entry;
 
-  JournalEntryView(this.entry, {super.key});
+  const JournalEntryView(this.entry, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +16,9 @@ class JournalEntryView extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                  style: const TextStyle(fontWeight: FontWeight.bold), entry.title),
-              Text(entry.entry),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  entry.title ?? ""),
+              Text(entry.entry ?? ""),
             ],
           ),
         ),
