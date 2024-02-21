@@ -11,11 +11,17 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   DatabaseService._init();
   Database? _database;
+  static const reSeed = bool.fromEnvironment('RE_SEED');
 
   Future<Database> get database async {
     if (_database != null) return _database!;
 
     _database = await _initDB('scbsss_db.db');
+
+    if (reSeed) {
+      seedDatabase();
+    }
+
     return _database!;
   }
 
@@ -23,6 +29,9 @@ class DatabaseService {
     final databasesPath = await getDatabasesPath();
     final dbPath = join(databasesPath, dbName);
 
+    if (reSeed) {
+      databaseFactory.deleteDatabase(databasesPath);
+    }
 
     // Make sure the directory exists
     try {
@@ -123,6 +132,24 @@ class DatabaseService {
         )
       ],
     });
+
+  Future<void> seedDatabase() async {
+    print('seed | Started');
+
+    DatabaseService.instance.insertMoodEntry(JournalEntry(
+      mood: 1,
+      title: 'Day 1 of classes',
+      entry: 'Classes went well',
+      date: DateTime.now()
+    ));
+
+    DatabaseService.instance.getMoodEntry().then((value) {
+      print(value.toString());
+    });
+
+    print('seed | Finished');
+    return;
+  }
 
   Future<void> insertMoodEntry(JournalEntry journalEntry) async {
     final db = await instance.database;
