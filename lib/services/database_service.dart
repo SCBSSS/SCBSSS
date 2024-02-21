@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:scbsss/models/journal_entry.dart';
+import 'package:scbsss/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration_plan/migration/sql.dart';
 import 'package:sqflite_migration_plan/sqflite_migration_plan.dart';
@@ -134,5 +135,19 @@ class DatabaseService {
     final List<Map<String, dynamic>> result = await db.query('journal_entries');
 
     return List.generate(result.length, (index) => JournalEntry.fromMap(result[index]));
+  }
+
+  Future<void> insertUser(User user) async {
+    final db = await instance.database;
+
+    await db.insert('users', user.toMapDbString());
+  }
+
+  Future<List<User>> getUser() async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.query('users');
+
+    return List.generate(result.length, (index) => User.fromMap(result[index]));
   }
 }
