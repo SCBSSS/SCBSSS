@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
-import '../models/journal_entry.dart';
+import 'package:scbsss/models/journal_entry.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration_plan/migration/sql.dart';
 import 'package:sqflite_migration_plan/sqflite_migration_plan.dart';
@@ -29,7 +29,7 @@ class DatabaseService {
 
     return await openDatabase(
       dbPath,
-      version: 5,
+      version: 8,
       onCreate: (db, version) {
         return migrationPlan(db, version);
       },
@@ -105,18 +105,33 @@ class DatabaseService {
           reverseSql: 'DROP TABLE meditation;'
         )
       ],
+      6: [
+        SqlMigration('ALTER TABLE mood_entries RENAME TO journal_entries;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME TO mood_entries;'
+        )
+      ],
+      7: [
+        SqlMigration('ALTER TABLE journal_entries RENAME COLUMN notes TO entry;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME COLUMN entry TO notes;'
+        )
+      ],
+      8: [
+        SqlMigration('ALTER TABLE journal_entries RENAME COLUMN timestamp TO date;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME COLUMN date TO timestamp;'
+        )
+      ],
     });
 
-  Future<void> insertMoodEntry(JournalEntry moodEntry) async {
+  Future<void> insertMoodEntry(JournalEntry journalEntry) async {
     final db = await instance.database;
 
-    await db.insert('mood_entries', moodEntry.toMapDbString());
+    await db.insert('journal_entries', journalEntry.toMapDbString());
   }
 
   Future<List<JournalEntry>> getMoodEntry() async {
     final db = await instance.database;
 
-    final List<Map<String, dynamic>> result = await db.query('mood_entries');
+    final List<Map<String, dynamic>> result = await db.query('journal_entries');
 
     return List.generate(result.length, (index) => JournalEntry.fromMap(result[index]));
   }

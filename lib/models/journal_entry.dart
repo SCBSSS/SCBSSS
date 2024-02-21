@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class JournalEntry {
-  final int? id; // Unique identifier for each mood entry
+  final int? id; // Unique identifier for each journal entry
   final int mood; // Mood rating from 1 to 5
   final String? title; // Optional title for the mood entry
   final String? entry; // Optional mood text
@@ -10,8 +10,8 @@ class JournalEntry {
   JournalEntry({
     this.id,
     required this.mood,
-    this.title,
-    this.entry,
+    this.title = '',
+    this.entry = '',
     required this.date,
   });
 
@@ -20,8 +20,8 @@ class JournalEntry {
       'id': id,
       'mood': mood,
       'title': title,
-      'notes': entry,
-      'timestamp': date
+      'entry': entry,
+      'date': date
     };
   }
 
@@ -30,18 +30,18 @@ class JournalEntry {
       if (id != null) 'id': id,
       'mood': mood,
       'title': title,
-      'notes': entry,
-      'timestamp': date.toIso8601String()
+      'entry': entry,
+      'date': date.toIso8601String()
     };
   }
 
   factory JournalEntry.fromMap(Map<String, dynamic> map) {
     return JournalEntry(
-        id: map['id']?.toInt() ?? 0,
-        mood: map['mood'].toInt(),
-        title: map['title'],
-        entry: map['notes'],
-        date: DateTime.parse(map['timestamp'])
+      id: map['id']?.toInt() ?? 0,
+      mood: map['mood'].toInt(),
+      title: map['title'],
+      entry: map['entry'],
+      date: DateTime.parse(map['date'])
     );
   }
 
@@ -51,6 +51,6 @@ class JournalEntry {
 
   @override
   String toString() {
-    return 'MoodEntry(id: $id, mood: $mood, title: $title, notes: $entry, timestamp: $date)';
+    return 'JournalEntry(id: $id, mood: $mood, title: $title, entry: $entry, date: $date)';
   }
 }
