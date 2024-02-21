@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scbsss/views/main_tab_widget.dart';
-import 'package:scbsss/views/setup_wizard.dart';
+import 'package:scbsss/main_tab_widget.dart';
+import 'package:scbsss/setup_wizard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isSetupDone = false;
 
-  void completeSetup(){
+  void completeSetup() {
     setState(() {
       isSetupDone = true;
     });

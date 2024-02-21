@@ -16,8 +16,10 @@ class JournalEntryView extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                  style: const TextStyle(fontWeight: FontWeight.bold), entry.title),
-              Text(entry.entry),
+                entry.title ?? 'No Title',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(entry.entry ?? 'No Entry'),
             ],
           ),
         ),
@@ -25,3 +27,4 @@ class JournalEntryView extends StatelessWidget {
     );
   }
 }
+ 
