@@ -8,10 +8,10 @@ class SCBSSSApp extends StatefulWidget {
   const SCBSSSApp({super.key});
 
   @override
-  State<SCBSSSApp> createState() => _MyAppState();
+  State<SCBSSSApp> createState() => _SCBSSSState();
 }
 
-class _MyAppState extends State<SCBSSSApp> {
+class _SCBSSSState extends State<SCBSSSApp> {
   bool isSetupDone = false;
   bool isLoading = true;
 
