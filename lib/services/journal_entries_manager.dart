@@ -3,6 +3,10 @@ import 'package:scbsss/services/database_service.dart';
 
 class JournalManager {
   final DatabaseService _databaseService = DatabaseService.instance;
+  late List<JournalEntry> journalEntries;
+  init() async {
+    journalEntries = await getAllEntries();
+  }
 
 
   Future<void> createEntry(JournalEntry entry) async {

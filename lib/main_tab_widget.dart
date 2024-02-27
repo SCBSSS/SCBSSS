@@ -7,13 +7,16 @@ import 'package:scbsss/tabs/entries_tab.dart';
 import 'package:scbsss/tabs/settings_tab.dart';
 
 class MainTabWidget extends StatefulWidget {
-  const MainTabWidget({super.key});
+  void Function(JournalEntry entry) createNewEntryCallback;
+  MainTabWidget({super.key,required this.createNewEntryCallback});
 
   @override
-  State<MainTabWidget> createState() => _MainTabWidgetState();
+  State<MainTabWidget> createState() => _MainTabWidgetState(createNewEntryCallback);
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
+
+  void Function(JournalEntry entry) createNewEntryCallback;
 
   final dummyJournalEntries = [
     JournalEntry(
@@ -52,7 +55,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      AddEntryTab(),
+      AddEntryTab(createNewEntryCallback),
       EntriesTab(dummyJournalEntries),
       DataTab(),
       SettingsTab(),
@@ -88,4 +91,6 @@ class _MainTabWidgetState extends State<MainTabWidget> {
       ),
     );
   }
+
+  _MainTabWidgetState(this.createNewEntryCallback);
 }

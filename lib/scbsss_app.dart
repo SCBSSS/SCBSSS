@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:scbsss/services/database_service.dart';
+import 'package:scbsss/services/journal_entries_manager.dart';
 import 'package:scbsss/setup_wizard.dart';
 
 import 'main_tab_widget.dart';
+import 'models/journal_entry.dart';
 
 class SCBSSSApp extends StatefulWidget {
   const SCBSSSApp({super.key});
@@ -14,6 +16,7 @@ class SCBSSSApp extends StatefulWidget {
 class _MyAppState extends State<SCBSSSApp> {
   bool isSetupDone = false;
   bool isLoading = true;
+  JournalManager journalManager = JournalManager();
 
   void completeSetup(){
     setState(() {
@@ -35,6 +38,10 @@ class _MyAppState extends State<SCBSSSApp> {
     });
   }
 
+  void createNewEntry(JournalEntry entry){
+    journalManager.createEntry(entry);
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -54,7 +61,7 @@ class _MyAppState extends State<SCBSSSApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: isSetupDone ? MainTabWidget() : SetupWizard(completeSetup),
+      home: isSetupDone ? MainTabWidget(createNewEntryCallback: createNewEntry) : SetupWizard(completeSetup),
     );
   }
 }
