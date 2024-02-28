@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initializeDatabase() async {
-    await DatabaseService.instance.database; // wait for db to get initalized
+    await DatabaseService.instance.database; // wait for db to get initialized
 
     setState(() {
       isLoading = false; // update loading state
@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(), // show loading indicator
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
