@@ -14,38 +14,37 @@ class MainTabWidget extends StatefulWidget {
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
-
   final dummyJournalEntries = [
     JournalEntry(
         id: 1,
         mood: 1,
         title: "Day 1 of classes",
         entry: "Classes went well",
-        date: DateTime.now()),
+        date: DateTime(2024, 2, 24)),
     JournalEntry(
         id: 2,
         mood: 3,
         title: "Day 2 of classes",
         entry: "Classes were okay",
-        date: DateTime.now()),
+        date: DateTime(2024, 2, 25)),
     JournalEntry(
         id: 3,
         mood: 5,
         title: "Day 3 of classes",
         entry: "Classes were excellent",
-        date: DateTime.now()),
+        date: DateTime(2024, 2, 26)),
     JournalEntry(
         id: 4,
         mood: 2,
         title: "Day 4 of classes",
         entry: "Classes were not so good",
-        date: DateTime.now()),
+        date: DateTime(2024, 2, 27)),
     JournalEntry(
         id: 5,
         mood: 4,
         title: "Day 5 of classes",
         entry: "Classes were good",
-        date: DateTime.now()),
+        date: DateTime(24, 2, 28)),
   ];
   int currentTabIndex = 0;
 
