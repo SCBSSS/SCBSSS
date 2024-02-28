@@ -14,19 +14,27 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
-  double _currentMoodValue = 1;
+  double _currentMoodValue = 3;
 
   void Function(JournalEntry entry) createNewEntryCallback;
 
+  void clearFields() {
+    _titleController.clear();
+    _entryController.clear();
+    setState(() {
+      _currentMoodValue = 3;
+    });
+  }
+
   void onSubmit(){
     JournalEntry entry = JournalEntry(
-      id: 0,
       mood: _currentMoodValue.toInt(),
       title: _titleController.text,
       entry: _entryController.text,
       date: DateTime.now()
     );
     createNewEntryCallback(entry);
+    clearFields();
   }
 
   @override
