@@ -3,8 +3,9 @@ import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/views/journal_entry_view.dart';
 
 class EntriesTab extends StatefulWidget {
-  List<JournalEntry> dummyJournalEntries;
-  EntriesTab(this.dummyJournalEntries);
+  final List<JournalEntry> journalEntries;
+
+  EntriesTab({required this.journalEntries});
 
   @override
   State<EntriesTab> createState() => _EntriesTabState();
@@ -22,7 +23,8 @@ class _EntriesTabState extends State<EntriesTab> {
     return Center(
       child: SafeArea(
         child: Column(
-          children: widget.dummyJournalEntries.map((e) => JournalEntryView(e)).toList(),
+          children: widget.journalEntries.map((e) => JournalEntryView(e))
+              .toList(),
         ),
       ),
     );

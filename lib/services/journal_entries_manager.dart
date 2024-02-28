@@ -1,23 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/services/database_service.dart';
 
 class JournalManager {
   final DatabaseService _databaseService = DatabaseService.instance;
-  late List<JournalEntry> journalEntries;
-  init() async {
-    journalEntries = await getAllEntries();
+  final ValueNotifier<List<JournalEntry>> _journalEntries = ValueNotifier<List<JournalEntry>>([]);
+
+  Future<void> init() async {
+    _journalEntries.value = await _databaseService.getMoodEntry();
   }
 
+  ValueNotifier<List<JournalEntry>> get journalEntries => _journalEntries;
 
-  Future<void> createEntry(JournalEntry entry) async {
-    await _databaseService.insertMoodEntry(entry);
-  }
-
-  Future<void> editEntry(JournalEntry entry) async {
-    // Implement the method to edit an entry in the database
-  }
-
-  Future<List<JournalEntry>> getAllEntries() async {
-    return await _databaseService.getMoodEntry();
+  Future<void> addEntry(JournalEntry entry) async {
+    _journalEntries.value = List.from(_journalEntries.value)..add(entry);
+    print("Num Entries: ${_journalEntries.value.length}");
+    _databaseService.insertMoodEntry(entry);
   }
 }

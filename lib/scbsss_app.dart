@@ -18,7 +18,7 @@ class _MyAppState extends State<SCBSSSApp> {
   bool isLoading = true;
   JournalManager journalManager = JournalManager();
 
-  void completeSetup(){
+  void completeSetup() {
     setState(() {
       isSetupDone = true;
     });
@@ -32,14 +32,17 @@ class _MyAppState extends State<SCBSSSApp> {
 
   Future<void> _initializeDatabase() async {
     await DatabaseService.instance.database; // wait for db to get initalized
+    await journalManager.init(); // wait for journal manager to get initalized
 
     setState(() {
       isLoading = false; // update loading state
     });
   }
 
-  void createNewEntry(JournalEntry entry){
-    journalManager.createEntry(entry);
+  void createNewEntry(JournalEntry entry) {
+    setState(() {
+      journalManager.addEntry(entry);
+    });
   }
 
   // This widget is the root of your application.
@@ -61,7 +64,9 @@ class _MyAppState extends State<SCBSSSApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: isSetupDone ? MainTabWidget(createNewEntryCallback: createNewEntry) : SetupWizard(completeSetup),
+      home: isSetupDone
+          ? MainTabWidget(createNewEntryCallback: createNewEntry, journalEntries: journalManager.journalEntries)
+          : SetupWizard(completeSetup),
     );
   }
 }

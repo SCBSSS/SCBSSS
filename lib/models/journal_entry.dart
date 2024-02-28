@@ -27,7 +27,7 @@ class JournalEntry {
 
   Map<String, dynamic> toMapDbString() {
     return {
-      'id': id,
+      if (id != null) 'id': id,
       'mood': mood,
       'title': title,
       'notes': entry,
