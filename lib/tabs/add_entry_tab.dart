@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
 
 class AddEntryTab extends StatefulWidget {
-  void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) createNewEntryCallback;
 
   AddEntryTab(this.createNewEntryCallback);
   @override

@@ -7,7 +7,7 @@ import 'package:scbsss/tabs/entries_tab.dart';
 import 'package:scbsss/tabs/settings_tab.dart';
 
 class MainTabWidget extends StatefulWidget {
-  void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) createNewEntryCallback;
   final ValueNotifier<List<JournalEntry>> journalEntries;
 
   MainTabWidget({
@@ -23,7 +23,7 @@ class MainTabWidget extends StatefulWidget {
 class _MainTabWidgetState extends State<MainTabWidget> {
 
   final ValueNotifier<List<JournalEntry>> journalEntries;
-  void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) createNewEntryCallback;
   int currentTabIndex = 0;
 
   _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries){
