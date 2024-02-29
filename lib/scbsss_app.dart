@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:scbsss/services/database_service.dart';
+import 'package:scbsss/services/journal_entries_manager.dart';
 import 'package:scbsss/setup_wizard.dart';
 
 import 'main_tab_widget.dart';
+import 'models/journal_entry.dart';
 
 class SCBSSSApp extends StatefulWidget {
   const SCBSSSApp({super.key});
@@ -14,8 +16,9 @@ class SCBSSSApp extends StatefulWidget {
 class _SCBSSSState extends State<SCBSSSApp> {
   bool isSetupDone = false;
   bool isLoading = true;
+  JournalManager journalManager = JournalManager();
 
-  void completeSetup(){
+  void completeSetup() {
     setState(() {
       isSetupDone = true;
     });
@@ -29,9 +32,16 @@ class _SCBSSSState extends State<SCBSSSApp> {
 
   Future<void> _initializeDatabase() async {
     await DatabaseService.instance.database; // wait for db to get initalized
+    await journalManager.init(); // wait for journal manager to get initalized
 
     setState(() {
       isLoading = false; // update loading state
+    });
+  }
+
+  void createNewEntry(JournalEntry entry) {
+    setState(() {
+      journalManager.addEntry(entry);
     });
   }
 
@@ -54,7 +64,9 @@ class _SCBSSSState extends State<SCBSSSApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: isSetupDone ? MainTabWidget() : SetupWizard(completeSetup),
+      home: isSetupDone
+          ? MainTabWidget(createNewEntryCallback: createNewEntry, journalEntries: journalManager.journalEntries)
+          : SetupWizard(completeSetup),
     );
   }
 }
