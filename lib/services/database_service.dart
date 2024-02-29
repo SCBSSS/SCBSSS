@@ -172,10 +172,11 @@ class DatabaseService {
     return;
   }
 
-  Future<void> insertJournalEntry(JournalEntry journalEntry) async {
+  Future<int> insertJournalEntry(JournalEntry journalEntry) async {
     final db = await instance.database;
+    final insertedId = await db.insert('journal_entries', journalEntry.toMapDbString());
 
-    await db.insert('journal_entries', journalEntry.toMapDbString());
+    return insertedId;
   }
 
   Future<List<JournalEntry>> getJournalEntry() async {
