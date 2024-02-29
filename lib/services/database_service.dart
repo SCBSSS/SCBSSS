@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:path/path.dart';
-import 'package:scbsss/models/mood_entry.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:scbsss/models/journal_entry.dart';
+import 'package:scbsss/models/setting.dart';
+import 'package:scbsss/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_migration_plan/migration/sql.dart';
 import 'package:sqflite_migration_plan/sqflite_migration_plan.dart';
@@ -9,17 +12,27 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   DatabaseService._init();
   Database? _database;
+  bool reSeed = bool.parse((dotenv.get('RE_SEED', fallback: 'false')));
 
   Future<Database> get database async {
     if (_database != null) return _database!;
 
     _database = await _initDB('scbsss_db.db');
+
+    if (reSeed) {
+      await seedDatabase();
+    }
+
     return _database!;
   }
 
   Future<Database> _initDB(String dbName) async {
     final databasesPath = await getDatabasesPath();
     final dbPath = join(databasesPath, dbName);
+
+    if (reSeed) {
+      await deleteDatabase(dbPath);
+    }
 
     // Make sure the directory exists
     try {
@@ -28,7 +41,7 @@ class DatabaseService {
 
     return await openDatabase(
       dbPath,
-      version: 5,
+      version: 8,
       onCreate: (db, version) {
         return migrationPlan(db, version);
       },
@@ -104,19 +117,102 @@ class DatabaseService {
           reverseSql: 'DROP TABLE meditation;'
         )
       ],
+      6: [
+        SqlMigration('ALTER TABLE mood_entries RENAME TO journal_entries;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME TO mood_entries;'
+        )
+      ],
+      7: [
+        SqlMigration('ALTER TABLE journal_entries RENAME COLUMN notes TO entry;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME COLUMN entry TO notes;'
+        )
+      ],
+      8: [
+        SqlMigration('ALTER TABLE journal_entries RENAME COLUMN timestamp TO date;',
+          reverseSql: 'ALTER TABLE journal_entries RENAME COLUMN date TO timestamp;'
+        )
+      ],
     });
 
-  Future<void> insertMoodEntry(MoodEntry moodEntry) async {
-    final db = await instance.database;
+  Future<void> seedDatabase() async {
+    print('seed | Started');
 
-    await db.insert('mood_entries', moodEntry.toMapDbString());
+    final dummyJournalEntries = [
+      JournalEntry(
+        mood: 1,
+        title: "Day 1 of classes",
+        entry: "Classes went well",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 3,
+        title: "Day 2 of classes",
+        entry: "Classes were okay",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 5,
+        title: "Day 3 of classes",
+        entry: "Classes were excellent",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 2,
+        title: "Day 4 of classes",
+        entry: "Classes were not so good",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 4,
+        title: "Day 5 of classes",
+        entry: "Classes were good",
+        date: DateTime.now()),
+    ];
+
+    for (var journalEntry in dummyJournalEntries) {
+      await DatabaseService.instance.insertJournalEntry(journalEntry);
+    }
+
+    print('seed | Finished');
+    return;
   }
 
-  Future<List<MoodEntry>> getMoodEntry() async {
+  Future<int> insertJournalEntry(JournalEntry journalEntry) async {
+    final db = await instance.database;
+    final insertedId = await db.insert('journal_entries', journalEntry.toMapDbString());
+
+    return insertedId;
+  }
+
+  Future<List<JournalEntry>> getJournalEntry() async {
     final db = await instance.database;
 
-    final List<Map<String, dynamic>> result = await db.query('mood_entries');
+    final List<Map<String, dynamic>> result = await db.query('journal_entries');
 
-    return List.generate(result.length, (index) => MoodEntry.fromMap(result[index]));
+    return List.generate(result.length, (index) => JournalEntry.fromMap(result[index]));
+  }
+
+  Future<void> insertUser(User user) async {
+    final db = await instance.database;
+
+    await db.insert('users', user.toMapDbString());
+  }
+
+  Future<List<User>> getUser() async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.query('users');
+
+    return List.generate(result.length, (index) => User.fromMap(result[index]));
+  }
+
+  Future<void> insertSetting(Setting setting) async {
+    final db = await instance.database;
+
+    await db.insert('settings', setting.toMapDbString());
+  }
+
+  Future<List<Setting>> getSetting() async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.query('setting');
+
+    return List.generate(result.length, (index) => Setting.fromMap(result[index]));
   }
 }

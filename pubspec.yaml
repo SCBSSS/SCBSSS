@@ -31,15 +31,20 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite: any
+  sqflite_migration_plan: ^1.0.0
   path_provider: any
   path: any
   flutter_heatmap_calendar: ^1.0.5
-
+  http: any
+  toggle_switch: ^2.1.0
+  table_calendar: ^3.1.0
+  intl: ^0.19.0
+  flutter_dotenv: ^5.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  sqflite_migration_plan: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -95,4 +100,5 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
   assets:
+    - .env
     - assets/images/logo.png

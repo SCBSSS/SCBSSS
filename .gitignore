@@ -9,6 +9,7 @@
 .history
 .svn/
 migrate_working_dir/
+.vscode
 
 # IntelliJ related
 *.iml
@@ -41,3 +42,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Backend stuff
+/flask_backend/.venv/
+
+# Environment
+.env

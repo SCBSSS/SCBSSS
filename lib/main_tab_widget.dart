@@ -7,58 +7,50 @@ import 'package:scbsss/tabs/entries_tab.dart';
 import 'package:scbsss/tabs/settings_tab.dart';
 
 class MainTabWidget extends StatefulWidget {
-  const MainTabWidget({super.key});
+  final void Function(JournalEntry entry) createNewEntryCallback;
+  final ValueNotifier<List<JournalEntry>> journalEntries;
+
+  MainTabWidget({
+    Key? key,
+    required this.createNewEntryCallback,
+    required this.journalEntries,
+  }) : super(key: key);
 
   @override
-  State<MainTabWidget> createState() => _MainTabWidgetState();
+  State<MainTabWidget> createState() => _MainTabWidgetState(createNewEntryCallback, journalEntries);
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
 
-  final dummyJournalEntries = [
-    JournalEntry(
-        id: 1,
-        mood: 1,
-        title: "Day 1 of classes",
-        entry: "Classes went well",
-        date: DateTime.now()),
-    JournalEntry(
-        id: 2,
-        mood: 3,
-        title: "Day 2 of classes",
-        entry: "Classes were okay",
-        date: DateTime.now()),
-    JournalEntry(
-        id: 3,
-        mood: 5,
-        title: "Day 3 of classes",
-        entry: "Classes were excellent",
-        date: DateTime.now()),
-    JournalEntry(
-        id: 4,
-        mood: 2,
-        title: "Day 4 of classes",
-        entry: "Classes were not so good",
-        date: DateTime.now()),
-    JournalEntry(
-        id: 5,
-        mood: 4,
-        title: "Day 5 of classes",
-        entry: "Classes were good",
-        date: DateTime.now()),
-  ];
+  final ValueNotifier<List<JournalEntry>> journalEntries;
+  final void Function(JournalEntry entry) createNewEntryCallback;
   int currentTabIndex = 0;
+
+  _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries){
+    journalEntries.addListener(() {
+      setState(() {});
+    });
+  }
+
+  Widget getTab(int index) {
+    switch (index) {
+      case 0:
+        return AddEntryTab(createNewEntryCallback);
+      case 1:
+        return EntriesTab(journalEntries: journalEntries.value);
+      case 2:
+        return DataTab();
+      case 3:
+        return SettingsTab();
+      default:
+        throw Exception('Invalid tab index');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final tabs = [
-      AddEntryTab(),
-      EntriesTab(dummyJournalEntries),
-      DataTab(),
-      SettingsTab(),
-    ];
     return Scaffold(
-      body: tabs[currentTabIndex],
+      body: getTab(currentTabIndex),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (int index) {
           setState(() {
@@ -88,4 +80,5 @@ class _MainTabWidgetState extends State<MainTabWidget> {
       ),
     );
   }
+
 }

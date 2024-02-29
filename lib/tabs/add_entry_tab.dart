@@ -1,16 +1,41 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scbsss/models/journal_entry.dart';
 
 class AddEntryTab extends StatefulWidget {
+  final void Function(JournalEntry entry) createNewEntryCallback;
+
+  AddEntryTab(this.createNewEntryCallback);
   @override
-  _AddEntryTabState createState() => _AddEntryTabState();
+  _AddEntryTabState createState() => _AddEntryTabState(createNewEntryCallback);
 }
 
 class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
-  double _currentMoodValue = 1;
+  double _currentMoodValue = 3;
+
+  void Function(JournalEntry entry) createNewEntryCallback;
+
+  void clearFields() {
+    _titleController.clear();
+    _entryController.clear();
+    setState(() {
+      _currentMoodValue = 3;
+    });
+  }
+
+  void onSubmit(){
+    JournalEntry entry = JournalEntry(
+      mood: _currentMoodValue.toInt(),
+      title: _titleController.text,
+      entry: _entryController.text,
+      date: DateTime.now()
+    );
+    createNewEntryCallback(entry);
+    clearFields();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +102,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: onSubmit,
                 child: const Text('Submit'),
               ),
             ],
@@ -93,4 +118,6 @@ class _AddEntryTabState extends State<AddEntryTab> {
     _entryController.dispose();
     super.dispose();
   }
+
+  _AddEntryTabState(this.createNewEntryCallback);
 }
