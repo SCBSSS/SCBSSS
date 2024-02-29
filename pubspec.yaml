@@ -38,6 +38,7 @@ dependencies:
   toggle_switch: ^2.1.0
   table_calendar: ^3.1.0
   intl: ^0.19.0
+  flutter_dotenv: ^5.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -98,4 +99,5 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
   assets:
+    - .env
     - assets/images/logo.png
