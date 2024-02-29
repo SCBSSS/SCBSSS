@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
-import os
+# import os
+from dotenv import dotenv_values
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+config = dotenv_values(".env")
+
+client = OpenAI(api_key=config['OPENAI_API_KEY'])
 
 app = Flask(__name__)
 
