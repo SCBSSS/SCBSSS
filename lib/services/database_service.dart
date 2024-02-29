@@ -30,7 +30,7 @@ class DatabaseService {
     final dbPath = join(databasesPath, dbName);
 
     if (reSeed) {
-      databaseFactory.deleteDatabase(databasesPath);
+      await deleteDatabase(dbPath);
     }
 
     // Make sure the directory exists
@@ -136,16 +136,37 @@ class DatabaseService {
   Future<void> seedDatabase() async {
     print('seed | Started');
 
-    DatabaseService.instance.insertJournalEntry(JournalEntry(
-      mood: 1,
-      title: 'Day 1 of classes',
-      entry: 'Classes went well',
-      date: DateTime.now()
-    ));
+    final dummyJournalEntries = [
+      JournalEntry(
+        mood: 1,
+        title: "Day 1 of classes",
+        entry: "Classes went well",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 3,
+        title: "Day 2 of classes",
+        entry: "Classes were okay",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 5,
+        title: "Day 3 of classes",
+        entry: "Classes were excellent",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 2,
+        title: "Day 4 of classes",
+        entry: "Classes were not so good",
+        date: DateTime.now()),
+      JournalEntry(
+        mood: 4,
+        title: "Day 5 of classes",
+        entry: "Classes were good",
+        date: DateTime.now()),
+    ];
 
-    DatabaseService.instance.getJournalEntry().then((value) {
-      print(value.toString());
-    });
+    for (var journalEntry in dummyJournalEntries) {
+      await DatabaseService.instance.insertJournalEntry(journalEntry);
+    }
 
     print('seed | Finished');
     return;
