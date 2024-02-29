@@ -44,3 +44,6 @@ app.*.map.json
 
 # Backend stuff
 /flask_backend/.venv/
+
+# Environment
+.env
