@@ -13,7 +13,7 @@ class SetupWizard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset('assets/images/logo.png', width: 200),
+
             const SizedBox(height: 20),
             const Text(
               'Welcome to SCBSSS!',

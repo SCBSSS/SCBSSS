@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scbsss/main_tab_widget.dart';
 import 'package:scbsss/setup_wizard.dart';
+import 'package:scbsss/services/database_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isSetupDone = false;
+  bool isLoading = true;
 
   void completeSetup(){
     setState(() {
@@ -22,27 +24,37 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeDatabase();
+  }
+
+  Future<void> _initializeDatabase() async {
+    await DatabaseService.instance.database; // wait for db to get initalized
+
+    setState(() {
+      isLoading = false; // update loading state
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(), // show loading indicator
+          ),
+        ),
+      );
+    }
+
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Scbsss',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
