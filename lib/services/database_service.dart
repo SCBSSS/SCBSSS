@@ -21,6 +21,7 @@ class DatabaseService {
     final databasesPath = await getDatabasesPath();
     final dbPath = join(databasesPath, dbName);
 
+
     // Make sure the directory exists
     try {
       await Directory(databasesPath).create(recursive: true);

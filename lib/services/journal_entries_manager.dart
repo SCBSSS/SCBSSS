@@ -14,7 +14,6 @@ class JournalManager {
 
   Future<void> addEntry(JournalEntry entry) async {
     _journalEntries.value = List.from(_journalEntries.value)..add(entry);
-    print("Num Entries: ${_journalEntries.value.length}");
     _databaseService.insertMoodEntry(entry);
   }
 }

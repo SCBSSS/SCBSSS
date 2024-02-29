@@ -54,8 +54,8 @@ class _EntriesTabState extends State<EntriesTab> {
           ),
           Expanded(
             child: _viewType == ViewType.timeline
-                ? TimelineView(entries: widget.dummyJournalEntries)
-                : CalendarView(dummyJournalEntries: widget.dummyJournalEntries),
+                ? TimelineView(entries: widget.journalEntries)
+                : CalendarView(dummyJournalEntries: widget.journalEntries),
           ),
         ],
       ),
