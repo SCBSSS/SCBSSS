@@ -34,6 +34,7 @@ dependencies:
   sqflite_migration_plan: ^1.0.0
   path_provider: any
   path: any
+  flutter_heatmap_calendar: ^1.0.5
   http: any
   toggle_switch: ^2.1.0
   table_calendar: ^3.1.0

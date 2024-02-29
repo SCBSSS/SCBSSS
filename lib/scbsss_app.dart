@@ -31,8 +31,8 @@ class _SCBSSSState extends State<SCBSSSApp> {
   }
 
   Future<void> _initializeDatabase() async {
-    await DatabaseService.instance.database; // wait for db to get initalized
-    await journalManager.init(); // wait for journal manager to get initalized
+    await DatabaseService.instance.database; // wait for db to get initialized
+    await journalManager.init(); // wait for journal manager to get initialized
 
     setState(() {
       isLoading = false; // update loading state
