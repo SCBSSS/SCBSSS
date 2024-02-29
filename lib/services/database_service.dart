@@ -136,14 +136,14 @@ class DatabaseService {
   Future<void> seedDatabase() async {
     print('seed | Started');
 
-    DatabaseService.instance.insertMoodEntry(JournalEntry(
+    DatabaseService.instance.insertJournalEntry(JournalEntry(
       mood: 1,
       title: 'Day 1 of classes',
       entry: 'Classes went well',
       date: DateTime.now()
     ));
 
-    DatabaseService.instance.getMoodEntry().then((value) {
+    DatabaseService.instance.getJournalEntry().then((value) {
       print(value.toString());
     });
 
@@ -151,13 +151,13 @@ class DatabaseService {
     return;
   }
 
-  Future<void> insertMoodEntry(JournalEntry journalEntry) async {
+  Future<void> insertJournalEntry(JournalEntry journalEntry) async {
     final db = await instance.database;
 
     await db.insert('journal_entries', journalEntry.toMapDbString());
   }
 
-  Future<List<JournalEntry>> getMoodEntry() async {
+  Future<List<JournalEntry>> getJournalEntry() async {
     final db = await instance.database;
 
     final List<Map<String, dynamic>> result = await db.query('journal_entries');
