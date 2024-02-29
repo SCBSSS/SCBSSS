@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 class User {
-  final int? id;
-  final String username;
-  final String email;
-  final String hashedPassword;
-  final String? preferences;
-  final DateTime joinDate;
+  int? id;
+  String username;
+  String email;
+  String hashedPassword;
+  String? preferences;
+  DateTime joinDate;
 
   User({
     this.id,

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class Setting {
-  final int? id;
-  final int? userId;
-  final String? notificationPreferences;
-  final String? appTheme;
-  final String? dataBackupOptions;
+  int? id;
+  int? userId;
+  String? notificationPreferences;
+  String? appTheme;
+  String? dataBackupOptions;
 
   Setting({
     this.id,
