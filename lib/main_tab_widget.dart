@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
@@ -14,7 +15,6 @@ class MainTabWidget extends StatefulWidget {
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
-
   final dummyJournalEntries = [
     JournalEntry(
         id: 1,
@@ -47,6 +47,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
         entry: "Classes were good",
         date: DateTime.now()),
   ];
+
   int currentTabIndex = 0;
 
   @override
@@ -55,8 +56,9 @@ class _MainTabWidgetState extends State<MainTabWidget> {
       AddEntryTab(),
       EntriesTab(dummyJournalEntries),
       DataTab(),
-      SettingsTab(),
+      SettingsTab(onGenerateNotification: _generateNotification),
     ];
+
     return Scaffold(
       body: tabs[currentTabIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -85,6 +87,17 @@ class _MainTabWidgetState extends State<MainTabWidget> {
             label: "Settings",
           ),
         ],
+      ),
+    );
+  }
+
+  void _generateNotification() {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 2,
+        channelKey: "basic_channel",
+        title: "Sample Notification",
+        body: "This worked. Yayyyyyy",
       ),
     );
   }

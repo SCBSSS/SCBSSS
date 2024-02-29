@@ -1,9 +1,41 @@
+//Final Edit
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:scbsss/main_tab_widget.dart';
+import 'package:scbsss/notification_controller.dart';
 import 'package:scbsss/setup_wizard.dart';
 import 'package:scbsss/services/database_service.dart';
 
-void main() {
+void main() async {
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelGroupKey: "basic_channel_group",
+        channelKey: "basic_channel",
+        channelName: "basic notification",
+        channelDescription: "basic notifications channel",
+        importance: NotificationImportance.High,
+        defaultColor: Colors.teal,
+        ledColor: Colors.teal,
+      )
+    ],
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupKey: "basic_channel_group",
+        channelGroupName: "basic group",
+      ),
+    ],
+  );
+
+//this asks the user to give the app permission to send notifications
+  bool isAllowedToSendNotification =
+      await AwesomeNotifications().isNotificationAllowed();
+  if (!isAllowedToSendNotification) {
+    AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
   runApp(const MyApp());
 }
 
@@ -18,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   bool isSetupDone = false;
   bool isLoading = true;
 
-  void completeSetup(){
+  void completeSetup() {
     setState(() {
       isSetupDone = true;
     });
@@ -26,6 +58,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    AwesomeNotifications().setListeners(
+        onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+        onNotificationCreatedMethod:
+            NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationController.onDismissActionReceivedMethod);
+
     super.initState();
     _initializeDatabase();
   }
@@ -44,6 +85,20 @@ class _MyAppState extends State<MyApp> {
     if (isLoading) {
       return MaterialApp(
         home: Scaffold(
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                AwesomeNotifications().createNotification(
+                  content: NotificationContent(
+                    id: 1,
+                    channelKey: "basic_channel",
+                    title: "Time for Mood Entry",
+                    body: "Please enter your daily mood entry",
+                  ),
+                );
+              },
+              child: Icon(
+                Icons.notification_add,
+              )),
           body: Center(
             child: CircularProgressIndicator(), // show loading indicator
           ),
