@@ -13,7 +13,8 @@ class JournalManager {
   ValueNotifier<List<JournalEntry>> get journalEntries => _journalEntries;
 
   Future<void> addEntry(JournalEntry entry) async {
+    int insertedId = await _databaseService.insertJournalEntry(entry);
+    entry.id = insertedId;
     _journalEntries.value = List.from(_journalEntries.value)..add(entry);
-    _databaseService.insertJournalEntry(entry);
   }
 }
