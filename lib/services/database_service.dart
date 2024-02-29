@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path/path.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/models/setting.dart';
 import 'package:scbsss/models/user.dart';
@@ -11,7 +12,7 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   DatabaseService._init();
   Database? _database;
-  static const reSeed = bool.fromEnvironment('RE_SEED');
+  bool reSeed = bool.parse((dotenv.get('RE_SEED', fallback: 'false')));
 
   Future<Database> get database async {
     if (_database != null) return _database!;
