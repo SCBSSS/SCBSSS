@@ -19,7 +19,7 @@ class DatabaseService {
     _database = await _initDB('scbsss_db.db');
 
     if (reSeed) {
-      seedDatabase();
+      await seedDatabase();
     }
 
     return _database!;
