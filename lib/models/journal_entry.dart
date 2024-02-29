@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 class JournalEntry {
-  final int? id; // Unique identifier for each journal entry
-  final int mood; // Mood rating from 1 to 5
-  final String? title; // Optional title for the mood entry
-  final String? entry; // Optional mood text
-  final DateTime date; // Timestamp for when the mood entry was created
+  int? id; // Unique identifier for each journal entry
+  int mood; // Mood rating from 1 to 5
+  String? title; // Optional title for the mood entry
+  String? entry; // Optional mood text
+  DateTime date; // Timestamp for when the mood entry was created
 
   JournalEntry({
     this.id,
