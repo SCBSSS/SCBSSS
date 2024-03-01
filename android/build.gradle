@@ -11,15 +11,6 @@ buildscript {
     }
 }
 
-android {
-    compileSdkVersion 34
-
-    defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 34
-    }
-}
-
 allprojects {
     repositories {
         google()
