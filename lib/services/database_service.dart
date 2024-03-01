@@ -12,7 +12,7 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   DatabaseService._init();
   Database? _database;
-  bool reSeed = bool.parse((dotenv.get('RE_SEED', fallback: 'false')));
+  bool reSeed = bool.parse(dotenv.get('RE_SEED', fallback: 'false'), caseSensitive: false);
 
   Future<Database> get database async {
     if (_database != null) return _database!;
