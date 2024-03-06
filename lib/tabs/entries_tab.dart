@@ -25,27 +25,29 @@ class _EntriesTabState extends State<EntriesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text('Previous Entries'),
         actions: [
-          ToggleSwitch(
-            minHeight: 40,
-            minWidth: 40,
-            initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
-            cornerRadius: 5.0,
-            activeFgColor: Colors.white,
-            inactiveBgColor: Colors.grey,
-            inactiveFgColor: Colors.white,
-            totalSwitches: 2,
-            labels: ['', ''],
-            customIcons: [
-              Icon(CupertinoIcons.list_bullet_below_rectangle, size: 16),
-              Icon(CupertinoIcons.calendar, size: 16),
-            ],
-            onToggle: (index) {
-              setState(() {
-                // Update your view type based on the toggle index
-                _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 8),
+            child: ToggleSwitch(
+              minHeight: 30,
+              minWidth: 40,
+              initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
+              cornerRadius: 5.0,
+              totalSwitches: 2,
+              labels: ['', ''],
+              activeFgColor: Colors.white,
+              inactiveFgColor: Colors.white,
+              customIcons: [
+                Icon(CupertinoIcons.list_bullet, size: 16,color: Colors.white,),
+                Icon(CupertinoIcons.calendar, size: 16,color: Colors.white,),
+              ],
+              onToggle: (index) {
+                setState(() {
+                  _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
+                });
+              },
+            ),
           ),
         ],
       ),
@@ -117,7 +119,6 @@ class TimelineView extends StatelessWidget {
               child: Divider(color: Color.fromARGB(255, 226, 225, 228)),
             );
           }
-          // return Divider(color: Color.fromARGB(255,226,225,228));
         });
   }
 }
