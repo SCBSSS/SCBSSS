@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/views/journal_entry_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:collection/collection.dart';
 
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
@@ -35,7 +37,8 @@ class _EntriesTabState extends State<EntriesTab> {
             inactiveBgColor: Colors.grey,
             inactiveFgColor: Colors.white,
             totalSwitches: 2,
-            labels: ['', ''], // Empty labels only icons
+            labels: ['', ''],
+            // Empty labels only icons
             icons: [
               CupertinoIcons.list_bullet_below_rectangle,
               CupertinoIcons.calendar
@@ -64,19 +67,65 @@ class _EntriesTabState extends State<EntriesTab> {
 }
 
 class TimelineView extends StatelessWidget {
-  final List<JournalEntry> entries;
+  late List<JournalEntry> entries;
 
-  TimelineView({required this.entries});
+
+  TimelineView({entries=List<JournalEntry>,super.key}) {
+    this.entries =  entries.where((element) => element.title != null || element.entry != null).toList(growable: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: entries.length,
-      itemBuilder: (context, index) {
-        JournalEntry entry = entries[index];
-        return JournalEntryView(entry); // No need to pass dayNumber anymore
-      },
-    );
+    return ListView.separated(
+        itemCount: entries.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return SizedBox.shrink();
+          }
+          index--;
+          final item = entries[index];
+          if (item is JournalEntry) {
+            return JournalEntryView(item);
+          }
+          if (item is DateTime) {}
+        },
+        separatorBuilder: (context, index) {
+          bool showDate = false;
+          var current = entries[index].date;
+          if (index == 0) {
+            showDate = true;
+          } else {
+            var prev = entries[index - 1].date;
+            showDate = !(current.year == prev.year &&
+                current.month == prev.month &&
+                current.day == prev.day);
+          }
+          if (showDate) {
+            final dateFormat = DateFormat('EEEE, MMM d');
+            String currentDate = dateFormat.format(current).toUpperCase();
+            return Padding(
+              padding: (index > 0)
+                  ? EdgeInsets.fromLTRB(16, 16, 0, 0)
+                  : EdgeInsets.fromLTRB(16, 0, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    currentDate,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Divider(color: Color.fromARGB(255, 226, 225, 228)),
+                ],
+              ),
+            );
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 26, vertical: 0),
+              child: Divider(color: Color.fromARGB(255, 226, 225, 228)),
+            );
+          }
+          // return Divider(color: Color.fromARGB(255,226,225,228));
+        });
   }
 }
 
@@ -99,7 +148,7 @@ class _CalendarViewState extends State<CalendarView> {
   Set<DateTime> get datesWithEntries {
     return widget.dummyJournalEntries
         .map((entry) =>
-        DateTime(entry.date.year, entry.date.month, entry.date.day))
+            DateTime(entry.date.year, entry.date.month, entry.date.day))
         .toSet();
   }
 
