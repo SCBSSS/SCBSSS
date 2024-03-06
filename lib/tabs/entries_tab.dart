@@ -25,42 +25,34 @@ class _EntriesTabState extends State<EntriesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Entry Tab'),
-      ),
-      body: Column(
-        children: <Widget>[
+        actions: [
           ToggleSwitch(
-            minWidth: 90.0,
-            initialLabelIndex: 1,
-            cornerRadius: 20.0,
+            minHeight: 40,
+            minWidth: 40,
+            initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
+            cornerRadius: 5.0,
             activeFgColor: Colors.white,
             inactiveBgColor: Colors.grey,
             inactiveFgColor: Colors.white,
             totalSwitches: 2,
             labels: ['', ''],
-            // Empty labels only icons
-            icons: [
-              CupertinoIcons.list_bullet_below_rectangle,
-              CupertinoIcons.calendar
-            ],
-            activeBgColors: [
-              [Colors.blue],
-              [Colors.pink]
+            customIcons: [
+              Icon(CupertinoIcons.list_bullet_below_rectangle, size: 16),
+              Icon(CupertinoIcons.calendar, size: 16),
             ],
             onToggle: (index) {
-              print('switched to: $index');
               setState(() {
                 // Update your view type based on the toggle index
                 _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
               });
             },
           ),
-          Expanded(
-            child: _viewType == ViewType.timeline
-                ? TimelineView(entries: widget.journalEntries)
-                : CalendarView(dummyJournalEntries: widget.journalEntries),
-          ),
         ],
+      ),
+      body: Expanded(
+        child: _viewType == ViewType.timeline
+            ? TimelineView(entries: widget.journalEntries)
+            : CalendarView(dummyJournalEntries: widget.journalEntries),
       ),
     );
   }
@@ -69,9 +61,10 @@ class _EntriesTabState extends State<EntriesTab> {
 class TimelineView extends StatelessWidget {
   late List<JournalEntry> entries;
 
-
-  TimelineView({entries=List<JournalEntry>,super.key}) {
-    this.entries =  entries.where((element) => element.title != null || element.entry != null).toList(growable: false);
+  TimelineView({entries = List<JournalEntry>, super.key}) {
+    this.entries = entries
+        .where((element) => element.title != null || element.entry != null)
+        .toList(growable: false);
   }
 
   @override
@@ -131,6 +124,7 @@ class TimelineView extends StatelessWidget {
 
 class CalendarView extends StatefulWidget {
   final List<JournalEntry> dummyJournalEntries;
+
   //calendar class
 
   CalendarView({Key? key, required this.dummyJournalEntries}) : super(key: key);
