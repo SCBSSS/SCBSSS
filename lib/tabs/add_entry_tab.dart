@@ -2,12 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
 
+import '../services/audio_recorder.dart';
+
 class AddEntryTab extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
+  final AudioRecorder _audioRecorder;
 
-  AddEntryTab(this.createNewEntryCallback);
+  AddEntryTab(this.createNewEntryCallback, this._audioRecorder);
+
   @override
-  _AddEntryTabState createState() => _AddEntryTabState(createNewEntryCallback);
+  _AddEntryTabState createState() =>
+      _AddEntryTabState(createNewEntryCallback, _audioRecorder);
 }
 
 class _AddEntryTabState extends State<AddEntryTab> {
@@ -15,6 +20,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
   double _currentMoodValue = 3;
+  bool isRecording = false;
+  final AudioRecorder _audioRecorder;
 
   void Function(JournalEntry entry) createNewEntryCallback;
 
@@ -26,15 +33,31 @@ class _AddEntryTabState extends State<AddEntryTab> {
     });
   }
 
-  void onSubmit(){
+  void onSubmit() {
     JournalEntry entry = JournalEntry(
-      mood: _currentMoodValue.toInt(),
-      title: _titleController.text,
-      entry: _entryController.text,
-      date: DateTime.now()
-    );
+        mood: _currentMoodValue.toInt(),
+        title: _titleController.text,
+        entry: _entryController.text,
+        date: DateTime.now());
     createNewEntryCallback(entry);
     clearFields();
+  }
+
+  Widget getRecordingButton(){
+    Icon icon = isRecording ? Icon(CupertinoIcons.stop) : Icon(CupertinoIcons.waveform);
+    return ElevatedButton(
+      onPressed: () {
+        if (isRecording) {
+          _audioRecorder.stopRecorder();
+        } else {
+          _audioRecorder.record();
+        }
+        setState(() {
+          isRecording = !isRecording;
+        });
+      },
+      child: icon,
+    );
   }
 
   @override
@@ -101,9 +124,15 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: onSubmit,
-                child: const Text('Submit'),
+              Row(
+                children: [
+                  getRecordingButton(),
+                  SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: onSubmit,
+                    child: Icon(CupertinoIcons.arrow_right),
+                  ),
+                ],
               ),
             ],
           ),
@@ -119,5 +148,5 @@ class _AddEntryTabState extends State<AddEntryTab> {
     super.dispose();
   }
 
-  _AddEntryTabState(this.createNewEntryCallback);
+  _AddEntryTabState(this.createNewEntryCallback, this._audioRecorder);
 }
