@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:scbsss/models/mood_entry.dart';
 import 'package:scbsss/services/data_handler.dart';
+import 'package:scbsss/views/heat_map.dart';
 
 class DataTab extends StatefulWidget {
   @override

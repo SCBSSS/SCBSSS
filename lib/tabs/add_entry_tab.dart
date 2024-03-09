@@ -1,23 +1,72 @@
 import 'package:cherry_toast/cherry_toast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
-import '../models/mood_entry.dart';
-import '../services/data_handler.dart';
+import 'package:scbsss/models/journal_entry.dart';
 
 class AddEntryTab extends StatefulWidget {
+  final void Function(JournalEntry entry) createNewEntryCallback;
+
+  AddEntryTab(this.createNewEntryCallback);
   @override
-  _AddEntryTabState createState() => _AddEntryTabState();
+  _AddEntryTabState createState() => _AddEntryTabState(createNewEntryCallback);
 }
 
 class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
-  double _currentMoodValue = 1;
   bool _isLoading = false;
   bool _isSuccess = false;
+  double _currentMoodValue = 3;
+
+  void Function(JournalEntry entry) createNewEntryCallback;
+
+  void clearFields() {
+    _titleController.clear();
+    _entryController.clear();
+    setState(() {
+      _currentMoodValue = 3;
+    });
+  }
+
+  void onSubmit(){
+    setState(() {
+      _isLoading = true;
+    });
+    
+    JournalEntry entry = JournalEntry(
+      mood: _currentMoodValue.toInt(),
+      title: _titleController.text,
+      entry: _entryController.text,
+      date: DateTime.now()
+    );
+
+    
+    try {
+      // Insert the MoodEntry into the database
+      createNewEntryCallback(entry);
+      clearFields();
+
+      // Update the UI to show success message
+      setState(() {
+        _isSuccess = true;
+      });
+     Fluttertoast.showToast(msg: "Entry Added");
+     CherryToast.success(
+      title:  Text("Entry Added", style: TextStyle(color: Colors.black))
+     ).show(context);
+    } catch (error) {
+      // Handle any errors that occur during database insertion
+      print('Error inserting entry: $error');
+      // Optionally, you can show an error message to the user
+    } finally {
+      // Update the UI to hide the loader
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +110,9 @@ class _AddEntryTabState extends State<AddEntryTab> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-                      // TODO: Generate a title based on the entry text
-                    },
+                    onPressed: () {},
                     icon: const Icon(CupertinoIcons.sparkles),
-                  )
+                  ) // TODO: Generate a title based on the entry text
                 ],
               ),
               const SizedBox(height: 16),
@@ -100,54 +147,12 @@ class _AddEntryTabState extends State<AddEntryTab> {
     );
   }
 
-  void _submitForm() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Create a MoodEntry object with the entered data
-    MoodEntry newEntry = MoodEntry(
-      mood: _currentMoodValue.toInt(),
-      title: _titleController.text,
-      notes: _entryController.text,
-      timestamp: DateTime.now(),
-    );
-
-    try {
-      // Insert the MoodEntry into the database
-      await DatabaseHelper().insertMoodEntry(newEntry);
-      _currentMoodValue = 1;
-      _titleController.clear();
-      _entryController.clear();
-
-      // Update the UI to show success message
-      setState(() {
-        _isSuccess = true;
-      });
-     Fluttertoast.showToast(msg: "Entry Added");
-      CherryToast.success(
-
-          title:  Text("Entry Added", style: TextStyle(color: Colors.black))
-
-      ).show(context);
-    } catch (error) {
-      // Handle any errors that occur during database insertion
-      print('Error inserting entry: $error');
-      // Optionally, you can show an error message to the user
-    } finally {
-      // Update the UI to hide the loader
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-    // Insert the MoodEntry into the database
-
-
   @override
   void dispose() {
     _titleController.dispose();
     _entryController.dispose();
     super.dispose();
   }
+
+  _AddEntryTabState(this.createNewEntryCallback);
 }
