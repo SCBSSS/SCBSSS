@@ -1,3 +1,5 @@
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
@@ -14,6 +16,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
+  bool _isLoading = false;
+  bool _isSuccess = false;
   double _currentMoodValue = 3;
 
   void Function(JournalEntry entry) createNewEntryCallback;
@@ -27,14 +31,41 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   void onSubmit(){
+    setState(() {
+      _isLoading = true;
+    });
+    
     JournalEntry entry = JournalEntry(
       mood: _currentMoodValue.toInt(),
       title: _titleController.text,
       entry: _entryController.text,
       date: DateTime.now()
     );
-    createNewEntryCallback(entry);
-    clearFields();
+
+    
+    try {
+      // Insert the MoodEntry into the database
+      createNewEntryCallback(entry);
+      clearFields();
+
+      // Update the UI to show success message
+      setState(() {
+        _isSuccess = true;
+      });
+     Fluttertoast.showToast(msg: "Entry Added");
+     CherryToast.success(
+      title:  Text("Entry Added", style: TextStyle(color: Colors.black))
+     ).show(context);
+    } catch (error) {
+      // Handle any errors that occur during database insertion
+      print('Error inserting entry: $error');
+      // Optionally, you can show an error message to the user
+    } finally {
+      // Update the UI to hide the loader
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -102,7 +133,11 @@ class _AddEntryTabState extends State<AddEntryTab> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: onSubmit,
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    _submitForm();
+                  }
+                },
                 child: const Text('Submit'),
               ),
             ],

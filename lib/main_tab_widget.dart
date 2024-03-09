@@ -21,7 +21,6 @@ class MainTabWidget extends StatefulWidget {
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
-
   final ValueNotifier<List<JournalEntry>> journalEntries;
   final void Function(JournalEntry entry) createNewEntryCallback;
   int currentTabIndex = 0;
@@ -49,6 +48,12 @@ class _MainTabWidgetState extends State<MainTabWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final tabs = [
+      AddEntryTab(),
+      EntriesTab(),
+      DataTab(),
+      SettingsTab(),
+    ];
     return Scaffold(
       body: getTab(currentTabIndex),
       bottomNavigationBar: BottomNavigationBar(

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:path/path.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/models/setting.dart';

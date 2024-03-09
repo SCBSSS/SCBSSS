@@ -30,6 +30,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.2
+  fl_chart: ^0.66.2
+  fluttertoast: ^8.2.4
+  awesome_dialog: ^3.2.0
+  cherry_toast: ^1.8.0
   sqflite: any
   sqflite_migration_plan: ^1.0.0
   path_provider: any
