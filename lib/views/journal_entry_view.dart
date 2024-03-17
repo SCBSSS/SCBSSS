@@ -17,6 +17,8 @@ class JournalEntryView extends StatelessWidget {
 
     final formattedTime = DateFormat('h:mm a').format(entry.date);
     final moodColor = getMoodColor(entry.mood);
+    final moodDisplay =
+        '${entry.mood} ${_getMoodEmoji(entry.mood)}'; // Updated to just include the mood level and emoji
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6),
@@ -32,6 +34,10 @@ class JournalEntryView extends StatelessWidget {
               ),
               width: 4,
             ),
+            SizedBox(width: 7),
+            Text(moodDisplay,
+                style: TextStyle(
+                    fontSize: 20)), // Display the emoji and mood level
             SizedBox(width: 7),
             Expanded(
               child: Column(
@@ -54,6 +60,24 @@ class JournalEntryView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getMoodEmoji(int mood) {
+    // Switch case to determine the emoji based on the mood value
+    switch (mood) {
+      case 1:
+        return '😡'; // Mood level 1
+      case 2:
+        return '😢'; // Mood level 2
+      case 3:
+        return '😑'; // Mood level 3
+      case 4:
+        return '😊'; // Mood level 4
+      case 5:
+        return '😁'; // Mood level 5
+      default:
+        return '😑'; // Default case if mood is out of expected range
+    }
   }
 
   getMoodColor(int mood) {
