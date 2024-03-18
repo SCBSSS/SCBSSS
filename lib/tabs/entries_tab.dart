@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:scbsss/models/journal_entry.dart';
 import 'package:scbsss/views/journal_entry_view.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
 
-  EntriesTab({required this.journalEntries, super.key});
+  const EntriesTab({required this.journalEntries, super.key});
 
   @override
   State<EntriesTab> createState() => _EntriesTabState();
@@ -23,65 +24,110 @@ class _EntriesTabState extends State<EntriesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Entry Tab'),
-      ),
-      body: Column(
-        children: <Widget>[
-          ToggleSwitch(
-            minWidth: 90.0,
-            initialLabelIndex: 1,
-            cornerRadius: 20.0,
-            activeFgColor: Colors.white,
-            inactiveBgColor: Colors.grey,
-            inactiveFgColor: Colors.white,
-            totalSwitches: 2,
-            labels: ['', ''], // Empty labels only icons
-            icons: [
-              CupertinoIcons.list_bullet_below_rectangle,
-              CupertinoIcons.calendar
-            ],
-            activeBgColors: [
-              [Colors.blue],
-              [Colors.pink]
-            ],
-            onToggle: (index) {
-              print('switched to: $index');
-              setState(() {
-                // Update your view type based on the toggle index
-                _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
-              });
-            },
-          ),
-          Expanded(
-            child: _viewType == ViewType.timeline
-                ? TimelineView(entries: widget.journalEntries)
-                : CalendarView(dummyJournalEntries: widget.journalEntries),
+        title: const Text('Previous Entries'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+            child: ToggleSwitch(
+              minHeight: 30,
+              minWidth: 40,
+              initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
+              cornerRadius: 5.0,
+              totalSwitches: 2,
+              labels: ['', ''],
+              activeFgColor: Colors.white,
+              inactiveFgColor: Colors.white,
+              customIcons: [
+                const Icon(
+                  CupertinoIcons.list_bullet,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                const Icon(
+                  CupertinoIcons.calendar,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ],
+              onToggle: (index) {
+                setState(() {
+                  _viewType =
+                      index == 0 ? ViewType.timeline : ViewType.calendar;
+                });
+              },
+            ),
           ),
         ],
       ),
+      body: _viewType == ViewType.timeline
+          ? TimelineView(entries: widget.journalEntries)
+          : CalendarView(dummyJournalEntries: widget.journalEntries),
     );
   }
 }
 
 class TimelineView extends StatelessWidget {
-  final List<JournalEntry> entries;
+  final List<JournalEntry> shownEntries;
 
-  TimelineView({required this.entries});
+  TimelineView({required List<JournalEntry> entries, super.key})
+      : shownEntries = entries
+            .where((element) => element.title != null || element.entry != null)
+            .toList(growable: false);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: entries.length,
-      itemBuilder: (context, index) {
-        JournalEntry entry = entries[index];
-        return JournalEntryView(entry); // No need to pass dayNumber anymore
-      },
-    );
+    return ListView.separated(
+        itemCount: shownEntries.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return const SizedBox.shrink();
+          }
+          index--;
+          final item = shownEntries[index];
+          return JournalEntryView(item);
+        },
+        separatorBuilder: (context, index) {
+          bool showDate = false;
+          var current = shownEntries[index].date;
+          if (index == 0) {
+            showDate = true;
+          } else {
+            var prev = shownEntries[index - 1].date;
+            showDate = !(current.year == prev.year &&
+                current.month == prev.month &&
+                current.day == prev.day);
+          }
+          if (showDate) {
+            final dateFormat = DateFormat('EEEE, MMM d');
+            String currentDate = dateFormat.format(current).toUpperCase();
+            return Padding(
+              padding: (index > 0)
+                  ? const EdgeInsets.fromLTRB(16, 16, 0, 0)
+                  : const EdgeInsets.fromLTRB(16, 0, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    currentDate,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const Divider(color: Color.fromARGB(255, 226, 225, 228)),
+                ],
+              ),
+            );
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 26, vertical: 0),
+              child: Divider(color: Color.fromARGB(255, 226, 225, 228)),
+            );
+          }
+        });
   }
 }
 
 class CalendarView extends StatefulWidget {
   final List<JournalEntry> dummyJournalEntries;
+
   //calendar class
 
   CalendarView({Key? key, required this.dummyJournalEntries}) : super(key: key);
@@ -99,7 +145,7 @@ class _CalendarViewState extends State<CalendarView> {
   Set<DateTime> get datesWithEntries {
     return widget.dummyJournalEntries
         .map((entry) =>
-        DateTime(entry.date.year, entry.date.month, entry.date.day))
+            DateTime(entry.date.year, entry.date.month, entry.date.day))
         .toSet();
   }
 
@@ -164,7 +210,7 @@ class _CalendarViewState extends State<CalendarView> {
               ),
               child: Text(
                 day.day.toString(),
-                style: TextStyle(color: Colors.blue),
+                style: const TextStyle(color: Colors.blue),
               ),
             );
           }
