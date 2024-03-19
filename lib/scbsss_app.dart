@@ -50,6 +50,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
   Widget build(BuildContext context) {
     if (isLoading) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Center(
             child: CircularProgressIndicator(), // show loading indicator
@@ -59,6 +60,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
     }
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
