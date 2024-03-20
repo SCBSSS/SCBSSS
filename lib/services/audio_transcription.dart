@@ -35,7 +35,7 @@ class AudioTranscription {
       // Assuming the API returns a JSON response containing the transcription
       var responseData = await http.Response.fromStream(response);
       return responseData
-          .body; // You might need to decode this, depending on the response structure
+          .body.trim(); // You might need to decode this, depending on the response structure
     } else {
       throw Exception(
           'Failed to transcribe audio. Status code: ${response.statusCode}');

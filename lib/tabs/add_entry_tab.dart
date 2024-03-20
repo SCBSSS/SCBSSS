@@ -53,11 +53,9 @@ class _AddEntryTabState extends State<AddEntryTab> {
     return ElevatedButton(
       onPressed: () async {
         if (isRecording) {
-          print("Waiting to stop recording");
-          print("Waiting 4 transcription");
+          await _audioRecorder.stopRecorder();
           String transcription = await widget._audioTranscription
               .transcribeAudio(currentRecordingPath);
-          print("Done!");
           _entryController.text += transcription;
         } else {
           currentRecordingPath = _audioRecorder.record();

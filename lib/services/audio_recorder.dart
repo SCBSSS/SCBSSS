@@ -69,7 +69,7 @@ class AudioRecorder {
     return filename;
   }
 
-  void stopRecorder() async {
-    await _mRecorder!.stopRecorder();
+  Future<String?> stopRecorder() async {
+    return await _mRecorder!.stopRecorder();
   }
 }
