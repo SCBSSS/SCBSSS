@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:scbsss/models/journal_entry.dart';
 
 import '../services/audio_recorder.dart';
+import '../services/audio_transcription.dart';
 
 class AddEntryTab extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
   final AudioRecorder _audioRecorder;
+  final AudioTranscription _audioTranscription;
 
-  AddEntryTab(this.createNewEntryCallback, this._audioRecorder);
+  AddEntryTab(this.createNewEntryCallback, this._audioRecorder)
+      : _audioTranscription = AudioTranscription();
 
   @override
   _AddEntryTabState createState() =>
@@ -22,6 +25,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   double _currentMoodValue = 3;
   bool isRecording = false;
   final AudioRecorder _audioRecorder;
+  var currentRecordingPath = "";
 
   void Function(JournalEntry entry) createNewEntryCallback;
 
@@ -43,14 +47,20 @@ class _AddEntryTabState extends State<AddEntryTab> {
     clearFields();
   }
 
-  Widget getRecordingButton(){
-    Icon icon = isRecording ? Icon(CupertinoIcons.stop) : Icon(CupertinoIcons.waveform);
+  Widget getRecordingButton() {
+    Icon icon =
+        isRecording ? Icon(CupertinoIcons.stop) : Icon(CupertinoIcons.waveform);
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         if (isRecording) {
-          _audioRecorder.stopRecorder();
+          print("Waiting to stop recording");
+          print("Waiting 4 transcription");
+          String transcription = await widget._audioTranscription
+              .transcribeAudio(currentRecordingPath);
+          print("Done!");
+          _entryController.text += transcription;
         } else {
-          _audioRecorder.record();
+          currentRecordingPath = _audioRecorder.record();
         }
         setState(() {
           isRecording = !isRecording;

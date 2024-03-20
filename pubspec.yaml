@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   sqflite: any
   sqflite_migration_plan: ^1.0.0
-  path_provider: any
+  path_provider: ^2.1.2
   path: any
   flutter_heatmap_calendar: ^1.0.5
   http: any
@@ -47,6 +47,7 @@ dependencies:
   flutter_sound: ^9.3.8
   permission_handler: ^11.3.0
   audio_session: ^0.1.18
+  uuid: ^4.3.3
 
 
 dev_dependencies:

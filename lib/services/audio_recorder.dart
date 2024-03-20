@@ -1,18 +1,28 @@
 import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/v4.dart';
 
 class AudioRecorder {
   Codec _codec = Codec.aacMP4;
-  String _mPath = 'recording.mp4';
+  late final String recordingPath;
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   bool _mRecorderIsInited = false;
+  var _uuid = Uuid();
 
   AudioRecorder() {
-    openTheRecorder().then((value) {
+    openTheRecorder().then((value) async {
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}';
+      recordingPath = filePath;
       _mRecorderIsInited = true;
     });
+  }
+  String genRandomFilename(){
+    return "$recordingPath/${_uuid.v4()}.mp4";
   }
 
   void dispose() {
@@ -50,11 +60,13 @@ class AudioRecorder {
     _mRecorderIsInited = true;
   }
 
-  void record() {
+  String record() {
+    var filename = genRandomFilename();
     _mRecorder!.startRecorder(
-      toFile: _mPath,
+      toFile: filename,
       codec: _codec,
     );
+    return filename;
   }
 
   void stopRecorder() async {
