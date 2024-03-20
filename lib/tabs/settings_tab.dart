@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -8,11 +9,26 @@ class SettingsTab extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.teal[500],
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Colors.tealAccent[400],
-          title: const Text('Settings'),
+          title: const Text('Settings',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
+            ),
+          ),
+          backgroundColor: Colors.orange[300],
+          elevation: 0,
+          centerTitle: true,
           bottom: const TabBar(
+            indicatorColor: Colors.blue,
+            labelColor: Colors.blue,
+            isScrollable: false,
+            labelPadding: EdgeInsets.all(0),
+            labelStyle: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 16),
             tabs: [
               Tab(text: 'General'),
               Tab(text: 'Account'),
@@ -20,10 +36,12 @@ class SettingsTab extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             GeneralSettings(),
-            Center(child: Text('Account Settings')),
+            Center(child: Text(
+              'Account Settings',
+            selectionColor: Colors.lightBlueAccent)),
             Center(child: Text('Notification Settings')),
           ],
         ),
