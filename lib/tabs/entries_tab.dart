@@ -61,7 +61,7 @@ class _EntriesTabState extends State<EntriesTab> {
       ),
       body: _viewType == ViewType.timeline
           ? TimelineView(entries: widget.journalEntries)
-          : CalendarView(dummyJournalEntries: widget.journalEntries),
+          : CalendarView(journalEntries: widget.journalEntries),
     );
   }
 }
@@ -126,11 +126,11 @@ class TimelineView extends StatelessWidget {
 }
 
 class CalendarView extends StatefulWidget {
-  final List<JournalEntry> dummyJournalEntries;
+  final List<JournalEntry> journalEntries;
 
   //calendar class
 
-  CalendarView({Key? key, required this.dummyJournalEntries}) : super(key: key);
+  CalendarView({Key? key, required this.journalEntries}) : super(key: key);
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -142,8 +142,19 @@ class _CalendarViewState extends State<CalendarView> {
   late DateTime _focusedDay; //current week, month, day
   DateTime? _selectedDay; //selected date
 
+  JournalEntry? findJournalEntryForDate(DateTime date) {
+    //  to find a journal entry within a specific date
+    try {
+      return widget.journalEntries.firstWhere(
+        (entry) => isSameDay(entry.date, date),
+      );
+    } catch (e) {
+      return null; //if no entry
+    }
+  }
+
   Set<DateTime> get datesWithEntries {
-    return widget.dummyJournalEntries
+    return widget.journalEntries
         .map((entry) =>
             DateTime(entry.date.year, entry.date.month, entry.date.day))
         .toSet();
@@ -172,15 +183,39 @@ class _CalendarViewState extends State<CalendarView> {
         //This gave an error without the 'null' even though it is not necesary becuase
         //there should always be a current day selected.
       },
+
+      //fetching the journal entry for the selected day "content"
       onDaySelected: (selectedDay, focusedDay) {
-        if (!isSameDay(_selectedDay, selectedDay)) {
-          //call
-          setState(() {
-            _selectedDay = selectedDay;
-            _focusedDay = focusedDay; // update
-          });
+        final entry = findJournalEntryForDate(selectedDay);
+        if (entry != null) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                  "Journal Entry for ${DateFormat('yMMMd').format(selectedDay)}"),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    if (entry.title != null) Text("Title: ${entry.title}"),
+                    if (entry.content != null)
+                      Text("Content: ${entry.content}"),
+                    // Display other entry details as needed
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
         }
       },
+
       onFormatChanged: (format) {
         //format of the calendar changing (might change this UI function)
         if (_calendarFormat != format) {
@@ -195,7 +230,8 @@ class _CalendarViewState extends State<CalendarView> {
         //no need to call (why?)
         _focusedDay = focusedDay;
       },
-      calendarBuilders: CalendarBuilders(
+
+      /* calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {
           // Check if this day has an entry
           if (datesWithEntries.contains(day)) {
@@ -217,7 +253,7 @@ class _CalendarViewState extends State<CalendarView> {
           // If not, return a default widget
           return null;
         },
-      ),
+      ),*/
     );
   }
 }

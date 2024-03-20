@@ -6,6 +6,7 @@ class JournalEntry {
   String? title; // Optional title for the mood entry
   String? entry; // Optional mood text
   DateTime date; // Timestamp for when the mood entry was created
+  final String content;
 
   JournalEntry({
     this.id,
@@ -13,6 +14,7 @@ class JournalEntry {
     this.title = '',
     this.entry = '',
     required this.date,
+    required this.content,
   });
 
   Map<String, dynamic> toMap() {
@@ -21,7 +23,8 @@ class JournalEntry {
       'mood': mood,
       'title': title,
       'entry': entry,
-      'date': date
+      'date': date,
+      'content': content,
     };
   }
 
@@ -31,7 +34,8 @@ class JournalEntry {
       'mood': mood,
       'title': title,
       'entry': entry,
-      'date': date.toIso8601String()
+      'date': date.toIso8601String(),
+      'content': content,
     };
   }
 
@@ -41,13 +45,15 @@ class JournalEntry {
       mood: map['mood'].toInt(),
       title: map['title'],
       entry: map['entry'],
-      date: DateTime.parse(map['date'])
+      date: DateTime.parse(map['date']),
+      content: map['content'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory JournalEntry.fromJson(String source) => JournalEntry.fromMap(json.decode(source));
+  factory JournalEntry.fromJson(String source) =>
+      JournalEntry.fromMap(json.decode(source));
 
   @override
   String toString() {
