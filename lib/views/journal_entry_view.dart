@@ -44,10 +44,11 @@ class JournalEntryView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    entry.title ?? '',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
+                  if (entry.title != null && entry.title!.isNotEmpty)
+                    Text(
+                      entry.title!,
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   Text(
                     entry.entry ?? '',
                     style: TextStyle(color: CupertinoColors.inactiveGray),
