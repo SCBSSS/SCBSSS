@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scbsss/services/audio_recorder.dart';
 import 'package:scbsss/services/database_service.dart';
 import 'package:scbsss/services/journal_entries_manager.dart';
 import 'package:scbsss/setup_wizard.dart';
@@ -17,6 +18,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
   bool isSetupDone = false;
   bool isLoading = true;
   JournalManager journalManager = JournalManager();
+  AudioRecorder audioRecorder = AudioRecorder();
 
   void completeSetup() {
     setState(() {
@@ -67,7 +69,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
         useMaterial3: true,
       ),
       home: isSetupDone
-          ? MainTabWidget(createNewEntryCallback: createNewEntry, journalEntries: journalManager.journalEntries)
+          ? MainTabWidget(audioRecorder: audioRecorder, createNewEntryCallback: createNewEntry, journalEntries: journalManager.journalEntries)
           : SetupWizard(completeSetup),
     );
   }
