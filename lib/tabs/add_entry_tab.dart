@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:scbsss/models/journal_entry.dart';
+import 'package:scbsss/services/llm_services.dart';
 
 import '../services/audio_recorder.dart';
 import '../services/audio_transcription.dart';
+import '../services/sentiment_analysis.dart';
 
 class AddEntryTab extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
@@ -18,14 +21,20 @@ class AddEntryTab extends StatefulWidget {
       _AddEntryTabState(createNewEntryCallback, _audioRecorder);
 }
 
+enum RecordingState {
+  recording,
+  transcribing,
+  ready,
+}
+
 class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
   double _currentMoodValue = 3;
-  bool isRecording = false;
   final AudioRecorder _audioRecorder;
   var currentRecordingPath = "";
+  var recordingState = RecordingState.ready;
 
   void Function(JournalEntry entry) createNewEntryCallback;
 
@@ -48,21 +57,49 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   Widget getRecordingButton() {
-    Icon icon =
-        isRecording ? Icon(CupertinoIcons.stop) : Icon(CupertinoIcons.waveform);
+    Icon icon;
+    switch (recordingState) {
+      case RecordingState.recording:
+        icon = Icon(CupertinoIcons.stop);
+        break;
+      case RecordingState.transcribing:
+        icon = Icon(CupertinoIcons.time);
+        break;
+      case RecordingState.ready:
+        icon = Icon(CupertinoIcons.waveform);
+        break;
+    }
     return ElevatedButton(
       onPressed: () async {
-        if (isRecording) {
-          await _audioRecorder.stopRecorder();
-          String transcription = await widget._audioTranscription
-              .transcribeAudio(audioFilePath: currentRecordingPath,prompt: _entryController.text);
-          _entryController.text += transcription;
-        } else {
-          currentRecordingPath = _audioRecorder.record();
+        switch (recordingState) {
+          case RecordingState.recording:
+            await _audioRecorder.stopRecorder();
+            setState(() {
+              recordingState = RecordingState.transcribing;
+            });
+            String transcription = await widget._audioTranscription
+                .transcribeAudio(
+                    audioFilePath: currentRecordingPath,
+                    prompt: _entryController.text);
+            if(_entryController.text.endsWith(" ") || _entryController.text.endsWith("\n")) {
+              _entryController.text += transcription;
+            } else {
+              _entryController.text += ' ';
+              _entryController.text += transcription;
+            }
+            setState(() {
+              recordingState = RecordingState.ready;
+            });
+            break;
+          case RecordingState.transcribing:
+            break;
+          case RecordingState.ready:
+            currentRecordingPath = await _audioRecorder.record();
+            setState(() {
+              recordingState = RecordingState.recording;
+            });
+            break;
         }
-        setState(() {
-          isRecording = !isRecording;
-        });
       },
       child: icon,
     );
@@ -81,17 +118,27 @@ class _AddEntryTabState extends State<AddEntryTab> {
           child: Column(
             children: [
               Text('Mood: ${_currentMoodValue.toInt()}'),
-              Slider(
-                value: _currentMoodValue,
-                min: 1,
-                max: 5,
-                divisions: 4,
-                label: _currentMoodValue.round().toString(),
-                onChanged: (double value) {
-                  setState(() {
-                    _currentMoodValue = value;
-                  });
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: Slider(
+                      value: _currentMoodValue,
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      label: _currentMoodValue.round().toString(),
+                      onChanged: (double value) {
+                        setState(() {
+                          _currentMoodValue = value;
+                        });
+                      },
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: detectSentiment,
+                    icon: const Icon(CupertinoIcons.sparkles),
+                  ) //
+                ],
               ),
               Row(
                 children: [
@@ -110,7 +157,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: insertGeneratedTitle,
                     icon: const Icon(CupertinoIcons.sparkles),
                   ) // TODO: Generate a title based on the entry text
                 ],
@@ -157,4 +204,19 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   _AddEntryTabState(this.createNewEntryCallback, this._audioRecorder);
+
+  detectSentiment() {
+    final s = analyzeSentiment(_entryController.text);
+    s.then((value) => setState(() {
+          var moodval = ((value + 1) * 2.5).ceilToDouble();
+          if (moodval <= 0)
+            moodval = 1.0;
+          else if (moodval >= 5) moodval = 5.0;
+          _currentMoodValue = moodval;
+        }));
+  }
+
+  void insertGeneratedTitle() {
+    generateTitle(_entryController.text).then((value) => _titleController.text = value);
+  }
 }
