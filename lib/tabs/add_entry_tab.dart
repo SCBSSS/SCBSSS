@@ -55,7 +55,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
         if (isRecording) {
           await _audioRecorder.stopRecorder();
           String transcription = await widget._audioTranscription
-              .transcribeAudio(currentRecordingPath);
+              .transcribeAudio(audioFilePath: currentRecordingPath,prompt: _entryController.text);
           _entryController.text += transcription;
         } else {
           currentRecordingPath = _audioRecorder.record();

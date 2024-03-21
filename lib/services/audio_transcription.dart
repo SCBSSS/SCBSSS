@@ -11,7 +11,8 @@ class AudioTranscription {
     'Content-Type': 'multipart/form-data',
   };
 
-  Future<String> transcribeAudio(String audioFilePath) async {
+  Future<String> transcribeAudio(
+      {required String audioFilePath, String? prompt}) async {
     final uri = Uri.parse('https://api.openai.com/v1/audio/transcriptions');
 
     // Create a multipart request
@@ -24,18 +25,18 @@ class AudioTranscription {
       ))
       ..fields['model'] = 'whisper-1'
       ..fields['response_format'] = "text";
+    if (prompt != null) {
+      request.fields["prompt"] = prompt;
+    }
 
-    // Send the request
-    print("Request sent!");
-    print(request);
     var response = await request.send();
 
     // Handle the response
     if (response.statusCode == 200) {
       // Assuming the API returns a JSON response containing the transcription
       var responseData = await http.Response.fromStream(response);
-      return responseData
-          .body.trim(); // You might need to decode this, depending on the response structure
+      return responseData.body
+          .trim(); // You might need to decode this, depending on the response structure
     } else {
       throw Exception(
           'Failed to transcribe audio. Status code: ${response.statusCode}');
