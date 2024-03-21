@@ -27,6 +27,7 @@ Future<double> analyzeSentiment(String input) async {
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     print(responseData.toString());
     final double sentimentScore = responseData['documentSentiment']['score'];
+    print("Sentiment score: $sentimentScore");
     return sentimentScore;
   } else {
     throw Exception('Failed to analyze sentiment. Status code: ${response.statusCode}');
