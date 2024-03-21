@@ -31,6 +31,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _entryController = TextEditingController();
+  final _contentController = TextEditingController();
   double _currentMoodValue = 3;
   final AudioRecorder _audioRecorder;
   var currentRecordingPath = "";
@@ -54,6 +55,24 @@ class _AddEntryTabState extends State<AddEntryTab> {
         date: DateTime.now());
     createNewEntryCallback(entry);
     clearFields();
+  }
+
+  //list of emojis to choose from
+  final List<String> moodEmojis = [
+    '😡',
+    '😢',
+    '😑',
+    '😊',
+    '😁',
+  ];
+  int _selectedMoodIndex = 2; //default mood index
+
+  //update emoji selection
+  void _onEmojiSelected(int index) {
+    setState(() {
+      _selectedMoodIndex = index;
+      _currentMoodValue = (index + 1).toDouble(); //mood value 1-5
+    });
   }
 
   Widget getRecordingButton() {
@@ -114,6 +133,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:
+          true, // Ensures the scaffold resizes when the keyboard appears
       appBar: AppBar(
         title: const Text('Add Entry'),
       ),
@@ -171,17 +192,16 @@ class _AddEntryTabState extends State<AddEntryTab> {
               const SizedBox(height: 16),
               Flexible(
                 child: TextFormField(
-                  maxLines: null,
+                  //maxLines: null,
                   controller: _entryController,
-                  decoration: const InputDecoration(
-                    labelText: 'Entry',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter an entry';
-                    }
-                    return null;
-                  },
+                  maxLines: 10, //larger
+                  keyboardType: TextInputType.multiline, //many lines
+                  decoration: InputDecoration(
+                      labelText: 'Entry',
+                      border: OutlineInputBorder(),
+                      alignLabelWithHint: true,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
                 ),
               ),
               const SizedBox(height: 16),
@@ -206,6 +226,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   void dispose() {
     _titleController.dispose();
     _entryController.dispose();
+    _contentController.dispose();
     super.dispose();
   }
 

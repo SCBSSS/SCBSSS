@@ -21,7 +21,7 @@ class JournalEntry {
       'mood': mood,
       'title': title,
       'entry': entry,
-      'date': date
+      'date': date,
     };
   }
 
@@ -31,7 +31,7 @@ class JournalEntry {
       'mood': mood,
       'title': title,
       'entry': entry,
-      'date': date.toIso8601String()
+      'date': date.toIso8601String(),
     };
   }
 
@@ -41,13 +41,14 @@ class JournalEntry {
       mood: map['mood'].toInt(),
       title: map['title'],
       entry: map['entry'],
-      date: DateTime.parse(map['date'])
+      date: DateTime.parse(map['date']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory JournalEntry.fromJson(String source) => JournalEntry.fromMap(json.decode(source));
+  factory JournalEntry.fromJson(String source) =>
+      JournalEntry.fromMap(json.decode(source));
 
   @override
   String toString() {

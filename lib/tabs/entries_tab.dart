@@ -23,45 +23,49 @@ class _EntriesTabState extends State<EntriesTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Previous Entries'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
-            child: ToggleSwitch(
-              minHeight: 30,
-              minWidth: 40,
-              initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
-              cornerRadius: 5.0,
-              totalSwitches: 2,
-              labels: ['', ''],
-              activeFgColor: Colors.white,
-              inactiveFgColor: Colors.white,
-              customIcons: [
-                const Icon(
-                  CupertinoIcons.list_bullet,
-                  size: 16,
-                  color: Colors.white,
-                ),
-                const Icon(
-                  CupertinoIcons.calendar,
-                  size: 16,
-                  color: Colors.white,
-                ),
-              ],
-              onToggle: (index) {
-                setState(() {
-                  _viewType =
-                      index == 0 ? ViewType.timeline : ViewType.calendar;
-                });
-              },
-            ),
-          ),
-        ],
-      ),
+      appBar: buildEntriesAppBar(),
       body: _viewType == ViewType.timeline
           ? TimelineView(entries: widget.journalEntries)
-          : CalendarView(dummyJournalEntries: widget.journalEntries),
+          : CalendarView(journalEntries: widget.journalEntries),
+    );
+  }
+
+  AppBar buildEntriesAppBar() {
+    return AppBar(
+      title: const Text('Previous Entries'),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
+          child: ToggleSwitch(
+            minHeight: 30,
+            minWidth: 40,
+            initialLabelIndex: _viewType == ViewType.timeline ? 0 : 1,
+            cornerRadius: 5.0,
+            totalSwitches: 2,
+            labels: ['', ''],
+            activeFgColor: Colors.white,
+            inactiveFgColor: Colors.white,
+            customIcons: [
+              const Icon(
+                CupertinoIcons.list_bullet,
+                size: 16,
+                color: Colors.white,
+              ),
+              const Icon(
+                CupertinoIcons.calendar,
+                size: 16,
+                color: Colors.white,
+              ),
+            ],
+            onToggle: (index) {
+              setState(() {
+                _viewType =
+                    index == 0 ? ViewType.timeline : ViewType.calendar;
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -126,11 +130,11 @@ class TimelineView extends StatelessWidget {
 }
 
 class CalendarView extends StatefulWidget {
-  final List<JournalEntry> dummyJournalEntries;
+  final List<JournalEntry> journalEntries;
 
   //calendar class
 
-  CalendarView({Key? key, required this.dummyJournalEntries}) : super(key: key);
+  CalendarView({Key? key, required this.journalEntries}) : super(key: key);
 
   @override
   _CalendarViewState createState() => _CalendarViewState();
@@ -142,8 +146,19 @@ class _CalendarViewState extends State<CalendarView> {
   late DateTime _focusedDay; //current week, month, day
   DateTime? _selectedDay; //selected date
 
+  List<JournalEntry>? findJournalEntryForDate(DateTime date) {
+    //  to find a journal entry within a specific date
+    try {
+      return widget.journalEntries.where(
+        (entry) => isSameDay(entry.date, date),
+      ).toList();
+    } catch (e) {
+      return null; //if no entry
+    }
+  }
+
   Set<DateTime> get datesWithEntries {
-    return widget.dummyJournalEntries
+    return widget.journalEntries
         .map((entry) =>
             DateTime(entry.date.year, entry.date.month, entry.date.day))
         .toSet();
@@ -172,15 +187,58 @@ class _CalendarViewState extends State<CalendarView> {
         //This gave an error without the 'null' even though it is not necesary becuase
         //there should always be a current day selected.
       },
+
+      //fetching the journal entry for the selected day "content"
       onDaySelected: (selectedDay, focusedDay) {
-        if (!isSameDay(_selectedDay, selectedDay)) {
-          //call
-          setState(() {
-            _selectedDay = selectedDay;
-            _focusedDay = focusedDay; // update
-          });
+        final entries = findJournalEntryForDate(selectedDay);
+        if (entries != null && entries.isNotEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(
+                  "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
+                  style: TextStyle(
+                    fontSize: 20
+                  ),),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Divider(
+                      thickness: 1,
+                      indent: 10,
+                      endIndent: 10,
+                      height: 0
+                    ),
+                    const SizedBox(height: 20,),
+                    ListBody(
+                      children: entries.map((entry) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (entry.title != null) Text("Title: ${entry.title}"),
+                            if (entry.entry != null) Text("Content: ${entry.entry}"),
+                            if (entry.entry != null) Text("Mood: ${getEmojiForMood(entry.mood)} ${entry.mood}"),
+                            const SizedBox(height: 40,),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
         }
       },
+
       onFormatChanged: (format) {
         //format of the calendar changing (might change this UI function)
         if (_calendarFormat != format) {
@@ -195,7 +253,8 @@ class _CalendarViewState extends State<CalendarView> {
         //no need to call (why?)
         _focusedDay = focusedDay;
       },
-      calendarBuilders: CalendarBuilders(
+
+      /* calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {
           // Check if this day has an entry
           if (datesWithEntries.contains(day)) {
@@ -217,7 +276,12 @@ class _CalendarViewState extends State<CalendarView> {
           // If not, return a default widget
           return null;
         },
-      ),
+      ),*/
     );
+  }
+
+  String getEmojiForMood(int mood) {
+    List<String> moodEmojis = ['😡', '😢', '😑', '😊', '😁']; //moods are 1-5
+    return moodEmojis[mood - 1]; //so subtracting 1 from the mood gets the associated emoji we want
   }
 }
