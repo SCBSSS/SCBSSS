@@ -32,15 +32,16 @@ class _AddEntryTabState extends State<AddEntryTab> {
         mood: _currentMoodValue.toInt(),
         title: _titleController.text,
         entry: _entryController.text,
-        date: DateTime.now());
+        date: DateTime.now(),
+        content: '??????????????????');
     createNewEntryCallback(entry);
     clearFields();
   }
 
-  //list of emjois to choose from
+  //list of emojis to choose from
   final List<String> moodEmojis = [
     '😡',
-    '😢 ',
+    '😢',
     '😑',
     '😊',
     '😁',
@@ -107,7 +108,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
               const SizedBox(height: 16),
               Flexible(
                 child: TextFormField(
-                  maxLines: null,
+                  //maxLines: null,
                   controller: _entryController,
                   maxLines: 10, //larger
                   keyboardType: TextInputType.multiline, //many lines

@@ -46,7 +46,7 @@ class JournalEntry {
       title: map['title'],
       entry: map['entry'],
       date: DateTime.parse(map['date']),
-      content: map['content'],
+      content: map['content'] ?? ' ', //I think we're going to need to remove this, this is irrelevant and causes the database to not be initialized, causing an infinite loop
     );
   }
 
