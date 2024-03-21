@@ -5,12 +5,11 @@ import 'package:scbsss/views/journal_entry_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:collection/collection.dart';
 
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
 
-  EntriesTab({required this.journalEntries, super.key});
+  const EntriesTab({required this.journalEntries, super.key});
 
   @override
   State<EntriesTab> createState() => _EntriesTabState();
@@ -25,10 +24,10 @@ class _EntriesTabState extends State<EntriesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Previous Entries'),
+        title: const Text('Previous Entries'),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8),
             child: ToggleSwitch(
               minHeight: 30,
               minWidth: 40,
@@ -39,12 +38,21 @@ class _EntriesTabState extends State<EntriesTab> {
               activeFgColor: Colors.white,
               inactiveFgColor: Colors.white,
               customIcons: [
-                Icon(CupertinoIcons.list_bullet, size: 16,color: Colors.white,),
-                Icon(CupertinoIcons.calendar, size: 16,color: Colors.white,),
+                const Icon(
+                  CupertinoIcons.list_bullet,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                const Icon(
+                  CupertinoIcons.calendar,
+                  size: 16,
+                  color: Colors.white,
+                ),
               ],
               onToggle: (index) {
                 setState(() {
-                  _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
+                  _viewType =
+                      index == 0 ? ViewType.timeline : ViewType.calendar;
                 });
               },
             ),
@@ -59,36 +67,32 @@ class _EntriesTabState extends State<EntriesTab> {
 }
 
 class TimelineView extends StatelessWidget {
-  late List<JournalEntry> entries;
+  final List<JournalEntry> shownEntries;
 
-  TimelineView({entries = List<JournalEntry>, super.key}) {
-    this.entries = entries
-        .where((element) => element.title != null || element.entry != null)
-        .toList(growable: false);
-  }
+  TimelineView({required List<JournalEntry> entries, super.key})
+      : shownEntries = entries
+            .where((element) => element.title != null || element.entry != null)
+            .toList(growable: false);
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-        itemCount: entries.length + 1,
+        itemCount: shownEntries.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
           index--;
-          final item = entries[index];
-          if (item is JournalEntry) {
-            return JournalEntryView(item);
-          }
-          if (item is DateTime) {}
+          final item = shownEntries[index];
+          return JournalEntryView(item);
         },
         separatorBuilder: (context, index) {
           bool showDate = false;
-          var current = entries[index].date;
+          var current = shownEntries[index].date;
           if (index == 0) {
             showDate = true;
           } else {
-            var prev = entries[index - 1].date;
+            var prev = shownEntries[index - 1].date;
             showDate = !(current.year == prev.year &&
                 current.month == prev.month &&
                 current.day == prev.day);
@@ -98,16 +102,16 @@ class TimelineView extends StatelessWidget {
             String currentDate = dateFormat.format(current).toUpperCase();
             return Padding(
               padding: (index > 0)
-                  ? EdgeInsets.fromLTRB(16, 16, 0, 0)
-                  : EdgeInsets.fromLTRB(16, 0, 0, 0),
+                  ? const EdgeInsets.fromLTRB(16, 16, 0, 0)
+                  : const EdgeInsets.fromLTRB(16, 0, 0, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     currentDate,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Divider(color: Color.fromARGB(255, 226, 225, 228)),
+                  const Divider(color: Color.fromARGB(255, 226, 225, 228)),
                 ],
               ),
             );
@@ -206,7 +210,7 @@ class _CalendarViewState extends State<CalendarView> {
               ),
               child: Text(
                 day.day.toString(),
-                style: TextStyle(color: Colors.blue),
+                style: const TextStyle(color: Colors.blue),
               ),
             );
           }
