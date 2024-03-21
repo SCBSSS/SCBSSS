@@ -70,40 +70,46 @@ class _AddEntryTabState extends State<AddEntryTab> {
         break;
     }
     return ElevatedButton(
-      onPressed: () async {
-        switch (recordingState) {
-          case RecordingState.recording:
-            await _audioRecorder.stopRecorder();
-            setState(() {
-              recordingState = RecordingState.transcribing;
-            });
-            String transcription = await widget._audioTranscription
-                .transcribeAudio(
-                    audioFilePath: currentRecordingPath,
-                    prompt: _entryController.text);
-            if(_entryController.text.endsWith(" ") || _entryController.text.endsWith("\n")) {
-              _entryController.text += transcription;
-            } else {
-              _entryController.text += ' ';
-              _entryController.text += transcription;
-            }
-            setState(() {
-              recordingState = RecordingState.ready;
-            });
-            break;
-          case RecordingState.transcribing:
-            break;
-          case RecordingState.ready:
-            currentRecordingPath = await _audioRecorder.record();
-            setState(() {
-              recordingState = RecordingState.recording;
-            });
-            break;
-        }
-      },
+      onPressed: handleTranscribeButton,
       child: icon,
     );
   }
+
+  void handleTranscribeButton() async {
+      switch (recordingState) {
+        case RecordingState.recording:
+          await _audioRecorder.stopRecorder();
+          setState(() {
+            recordingState = RecordingState.transcribing;
+          });
+          String transcription = await widget._audioTranscription
+              .transcribeAudio(
+                  audioFilePath: currentRecordingPath,
+                  prompt: _entryController.text);
+          if(_entryController.text.endsWith(" ") || _entryController.text.endsWith("\n")) {
+            _entryController.text += transcription;
+          } else {
+            _entryController.text += ' ';
+            _entryController.text += transcription;
+          }
+          setState(() {
+            recordingState = RecordingState.ready;
+          });
+          if(_titleController.text.isEmpty){
+            insertGeneratedTitle();
+          }
+          detectSentiment();
+          break;
+        case RecordingState.transcribing:
+          break;
+        case RecordingState.ready:
+          currentRecordingPath = await _audioRecorder.record();
+          setState(() {
+            recordingState = RecordingState.recording;
+          });
+          break;
+      }
+    }
 
   @override
   Widget build(BuildContext context) {
