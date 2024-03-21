@@ -6,7 +6,6 @@ class JournalEntry {
   String? title; // Optional title for the mood entry
   String? entry; // Optional mood text
   DateTime date; // Timestamp for when the mood entry was created
-  final String content;
 
   JournalEntry({
     this.id,
@@ -14,7 +13,6 @@ class JournalEntry {
     this.title = '',
     this.entry = '',
     required this.date,
-    required this.content,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +22,6 @@ class JournalEntry {
       'title': title,
       'entry': entry,
       'date': date,
-      'content': content,
     };
   }
 
@@ -35,7 +32,6 @@ class JournalEntry {
       'title': title,
       'entry': entry,
       'date': date.toIso8601String(),
-      'content': content,
     };
   }
 
@@ -46,7 +42,6 @@ class JournalEntry {
       title: map['title'],
       entry: map['entry'],
       date: DateTime.parse(map['date']),
-      content: map['content'] ?? ' ', //I think we're going to need to remove this, this is irrelevant and causes the database to not be initialized, causing an infinite loop
     );
   }
 

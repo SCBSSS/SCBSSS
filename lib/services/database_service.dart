@@ -134,31 +134,31 @@ class DatabaseService {
           title: "Day 1 of classes",
           entry: "Classes went well",
           date: DateTime.now(),
-          content: "Classes went well"),
+      ),
       JournalEntry(
           mood: 3,
           title: "Day 2 of classes",
           entry: "Classes were okay",
           date: DateTime.now(),
-          content: "Classes were okay"),
+      ),
       JournalEntry(
           mood: 5,
           title: "Day 3 of classes",
           entry: "Classes were excellent",
           date: DateTime.now(),
-          content: "Classes were excellent"),
+    ),
       JournalEntry(
           mood: 2,
           title: "Day 4 of classes",
           entry: "Classes were not so good",
           date: DateTime.now(),
-          content: "Classes were not so good"),
+    ),
       JournalEntry(
           mood: 4,
           title: "Day 5 of classes",
           entry: "Classes were good",
           date: DateTime.now(),
-          content: "Classes were good"),
+      ),
     ];
 
     for (var journalEntry in dummyJournalEntries) {

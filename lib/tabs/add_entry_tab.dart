@@ -32,8 +32,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
         mood: _currentMoodValue.toInt(),
         title: _titleController.text,
         entry: _entryController.text,
-        date: DateTime.now(),
-        content: '??????????????????');
+        date: DateTime.now());
+
     createNewEntryCallback(entry);
     clearFields();
   }

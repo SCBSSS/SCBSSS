@@ -197,8 +197,8 @@ class _CalendarViewState extends State<CalendarView> {
                 child: ListBody(
                   children: <Widget>[
                     if (entry.title != null) Text("Title: ${entry.title}"),
-                    if (entry.content != null)
-                      Text("Content: ${entry.content}"),
+                    if (entry.entry != null)
+                      Text("Content: ${entry.entry}"),
                     // Display other entry details as needed
                   ],
                 ),
