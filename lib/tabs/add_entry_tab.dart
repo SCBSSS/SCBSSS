@@ -256,8 +256,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
           var moodval = ((value + 1) * 2.5).ceilToDouble();
           if (moodval <= 0)
             moodval = 1.0;
-          else if (moodval >= 5) moodval = 5.0;
-          _currentMoodValue = moodval;
+          else if (moodval >= 5) moodval = 5.0; //moodval NOT index
+          _onEmojiSelected(moodval.toInt() - 1); //passing in the index NOT the moodval
         }));
   }
 
