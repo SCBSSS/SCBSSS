@@ -197,7 +197,7 @@ class _CalendarViewState extends State<CalendarView> {
             builder: (context) => AlertDialog(
               title: Text(
                   "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20
                   ),),
               content: SingleChildScrollView(
@@ -217,7 +217,7 @@ class _CalendarViewState extends State<CalendarView> {
                           children: [
                             if (entry.title != null) Text("Title: ${entry.title}"),
                             if (entry.entry != null) Text("Content: ${entry.entry}"),
-                            if (entry.entry != null) Text("Mood: ${getEmojiForMood(entry.mood)} ${entry.mood}"),
+                            if (entry.entry != null) Text("Mood: ${getEmojiForMood(entry.mood)}"),
                             const SizedBox(height: 40,),
                           ],
                         );
@@ -281,7 +281,7 @@ class _CalendarViewState extends State<CalendarView> {
   }
 
   String getEmojiForMood(int mood) {
-    List<String> moodEmojis = ['😡', '😢', '😑', '😊', '😁']; //moods are 1-5
+    List<String> moodEmojis = ['😡', '😢', '😐', '😊', '😁']; //moods are 1-5
     return moodEmojis[mood - 1]; //so subtracting 1 from the mood gets the associated emoji we want
   }
 }

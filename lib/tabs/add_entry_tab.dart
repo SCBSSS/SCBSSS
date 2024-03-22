@@ -61,7 +61,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final List<String> moodEmojis = [
     '😡',
     '😢',
-    '😑',
+    '😐',
     '😊',
     '😁',
   ];
@@ -136,63 +136,79 @@ class _AddEntryTabState extends State<AddEntryTab> {
       resizeToAvoidBottomInset:
           true, // Ensures the scaffold resizes when the keyboard appears
       appBar: AppBar(
-        title: const Text('Add Entry'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Text('Mood: ${_currentMoodValue.toInt()}'),
-              Row(
-                children: [
-                  Expanded(
-                    child: Slider(
-                      value: _currentMoodValue,
-                      min: 1,
-                      max: 5,
-                      divisions: 4,
-                      label: _currentMoodValue.round().toString(),
-                      onChanged: (double value) {
-                        setState(() {
-                          _currentMoodValue = value;
-                        });
-                      },
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: detectSentiment,
-                    icon: const Icon(CupertinoIcons.sparkles),
-                  ) //
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Title',
+          //removed "add entry" to keep it more clean and simple
+          ),
+      body: SingleChildScrollView(
+        // Makes the body scrollable
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment
+                  .start, // Aligns the children at the start of the column
+              crossAxisAlignment: CrossAxisAlignment
+                  .stretch, // Stretches the children to fit the width of the column
+              children: [
+                const SizedBox(
+                    height:
+                        16), // You can adjust this value if you want more or less space at the top
+                const Text(
+                  'Hi! \nHow are you feeling today?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(moodEmojis.length, (index) {
+                    return GestureDetector(
+                      onTap: () => _onEmojiSelected(index),
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: _selectedMoodIndex == index
+                              ? Colors.blue[100]
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          moodEmojis[index],
+                          style: const TextStyle(fontSize: 24),
+                        ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
-                        }
-                        return null;
-                      },
+                    );
+                  }).toList(),
+                ),
+
+                const SizedBox(height: 8), //space after emoji
+
+                //adding back the slider // Slider
+                //slider labels 1-5
+
+                //title text field
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _titleController,
+                        decoration: InputDecoration(
+                            labelText: 'Title',
+                            border: OutlineInputBorder(),
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
+                      ),
+
                     ),
-                  ),
-                  IconButton(
-                    onPressed: insertGeneratedTitle,
-                    icon: const Icon(CupertinoIcons.sparkles),
-                  ) // TODO: Generate a title based on the entry text
-                ],
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: TextFormField(
-                  //maxLines: null,
+                    IconButton(
+                      onPressed: insertGeneratedTitle,
+                      icon: const Icon(CupertinoIcons.sparkles)
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                //enrty text fiels
+                TextFormField(
                   controller: _entryController,
                   maxLines: 10, //larger
                   keyboardType: TextInputType.multiline, //many lines
@@ -203,7 +219,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
                 ),
-              ),
+
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -215,12 +231,14 @@ class _AddEntryTabState extends State<AddEntryTab> {
                   ),
                 ],
               ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 
   @override
   void dispose() {
@@ -238,8 +256,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
           var moodval = ((value + 1) * 2.5).ceilToDouble();
           if (moodval <= 0)
             moodval = 1.0;
-          else if (moodval >= 5) moodval = 5.0;
-          _currentMoodValue = moodval;
+          else if (moodval >= 5) moodval = 5.0; //moodval NOT index
+          _onEmojiSelected(moodval.toInt() - 1); //passing in the index NOT the moodval
         }));
   }
 
