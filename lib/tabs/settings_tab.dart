@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:scbsss/notification_service.dart'; // Import the notification service file
 
 class SettingsTab extends StatelessWidget {
-  const SettingsTab({super.key});
+  const SettingsTab({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,8 @@ class SettingsTab extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Settings',
+          title: const Text(
+            'Settings',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.bold,
@@ -39,10 +42,15 @@ class SettingsTab extends StatelessWidget {
         body: const TabBarView(
           children: [
             GeneralSettings(),
-            Center(child: Text(
-              'Account Settings',
-            selectionColor: Colors.lightBlueAccent)),
-            Center(child: Text('Notification Settings')),
+            Center(
+              child: Text(
+                'Account Settings',
+                style: TextStyle(color: Colors.lightBlueAccent),
+              ),
+            ),
+            Center(
+              child: NotificationsSettings(),
+            ),
           ],
         ),
       ),
@@ -51,7 +59,7 @@ class SettingsTab extends StatelessWidget {
 }
 
 class GeneralSettings extends StatefulWidget {
-  const GeneralSettings({super.key});
+  const GeneralSettings({Key? key}) : super(key: key);
 
   @override
   _GeneralSettingsState createState() => _GeneralSettingsState();
@@ -104,5 +112,35 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         ),
       ],
     );
+  }
+}
+
+class NotificationsSettings extends StatelessWidget {
+  const NotificationsSettings({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: _showTestNotification,
+            child: Text('Show Test Notification'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Add logic to handle scheduling notifications
+            },
+            child: Text('Schedule Notification'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Method to show a test notification
+  Future<void> _showTestNotification() async {
+    createNotification(); // Call the createNotification method
   }
 }
