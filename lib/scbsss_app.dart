@@ -6,7 +6,6 @@ import 'package:scbsss/setup_wizard.dart';
 
 import 'main_tab_widget.dart';
 import 'models/journal_entry.dart';
-import 'notification_service.dart';
 
 class SCBSSSApp extends StatefulWidget {
   const SCBSSSApp({super.key});
@@ -36,8 +35,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
   Future<void> _initializeDatabase() async {
     await DatabaseService.instance.database; // wait for db to get initialized
     await journalManager.init(); // wait for journal manager to get initialized
-    await initializeNotifications();
-    setNotificationListeners();
+
     setState(() {
       isLoading = false; // update loading state
     });
