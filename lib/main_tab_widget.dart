@@ -32,34 +32,40 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   final void Function(JournalEntry entry) createNewEntryCallback;
   int currentTabIndex = 0;
   final AudioRecorder _audioRecorder;
+  late PageController _pageController; // Add this
 
   _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries, this._audioRecorder) {
     journalEntries.addListener(() {
       setState(() {});
     });
+    _pageController = PageController(); // Initialize the PageController
   }
 
-  Widget getTab(int index) {
-    switch (index) {
-      case 0:
-        return AddEntryTab(createNewEntryCallback, _audioRecorder);
-      case 1:
-        return EntriesTab(journalEntries: journalEntries.value);
-      case 2:
-        return DataTab();
-      case 3:
-        return WellBeing();
-      case 4:
-        return SettingsTab();
-      default:
-        throw Exception('Invalid tab index');
-    }
+  @override
+  void dispose() {
+    _pageController.dispose(); // Dispose the PageController
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: getTab(currentTabIndex),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            currentTabIndex = index;
+          });
+        },
+        physics: NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          AddEntryTab(createNewEntryCallback, _audioRecorder),
+          EntriesTab(journalEntries: journalEntries.value),
+          DataTab(),
+          WellBeing(),
+          SettingsTab(),
+        ],
+      ),
       bottomNavigationBar: Container(
         color: Colors.black,
         child: Padding(
@@ -73,20 +79,21 @@ class _MainTabWidgetState extends State<MainTabWidget> {
             gap: 12,
             tabs: const [
               GButton(icon: CupertinoIcons.add,
-              text: 'Add Entry',),
+                text: 'Add Entry',),
               GButton(icon: CupertinoIcons.list_bullet,
-              text: 'Entries'),
+                  text: 'Entries'),
               GButton(icon: CupertinoIcons.graph_square,
-              text: 'Data'),
+                  text: 'Data'),
               GButton(icon: CupertinoIcons.metronome,
-              text: "Well-being"),
+                  text: "Well-being"),
               GButton(icon: CupertinoIcons.settings,
-              text: 'Settings')
+                  text: 'Settings')
             ],
             onTabChange: (int index) {
               setState(() {
                 currentTabIndex = index;
               });
+              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut); // Add this
             },
           ),
         ),
