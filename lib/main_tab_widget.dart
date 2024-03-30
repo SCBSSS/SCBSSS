@@ -32,7 +32,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   final void Function(JournalEntry entry) createNewEntryCallback;
   int currentTabIndex = 0;
   final AudioRecorder _audioRecorder;
-  late PageController _pageController; // Add this
+  late PageController _pageController;
 
   _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries, this._audioRecorder) {
     journalEntries.addListener(() {
@@ -93,7 +93,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
               setState(() {
                 currentTabIndex = index;
               });
-              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut); // Add this
+              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut); 
             },
           ),
         ),
