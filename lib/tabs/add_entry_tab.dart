@@ -207,7 +207,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                //enrty text fiels
+                //entry text fields
                 TextFormField(
                   controller: _entryController,
                   maxLines: 10, //larger
