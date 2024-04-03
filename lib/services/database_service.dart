@@ -161,9 +161,9 @@ class DatabaseService {
       ),
     ];
 
-    for (var journalEntry in dummyJournalEntries) {
-      await DatabaseService.instance.insertJournalEntry(journalEntry);
-    }
+    // for (var journalEntry in dummyJournalEntries) {
+    //   await DatabaseService.instance.insertJournalEntry(journalEntry);
+    // }
 
     print('seed | Finished');
     return;
