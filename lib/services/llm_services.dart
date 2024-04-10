@@ -6,7 +6,6 @@ import '../models/journal_entry.dart';
 
 final _serverUrl = dotenv.get("BACKEND_LOC");
 final _gcloudApiKey = dotenv.get("GCLOUD_API_KEY");
-final _gcloudApiKey_sentiment = dotenv.get("GCLOUD_API_KEY_sentiment");
 
 Future<String> generateTitle(String entry) async {
   final url = Uri.parse('http://$_serverUrl/title_generation');
@@ -37,12 +36,18 @@ Future<String> searchMeditationVideo() async {
     throw Exception('No entries provided');
   }
 
+  // define a list of stop words
+  var stopWords = ['and', 'but', 'or', 'the', 'a', 'an', 'is', 'it', 'this', 'that'];
+
   // count # of times each word is said
   var wordCounts = <String, int>{};
   for (var journalEntry in entries) {
     var words = journalEntry.entry?.split(' ');
     for (var word in words!) {
-      wordCounts[word] = (wordCounts[word] ?? 0) + 1;
+      // ignore the word if it's a stop word
+      if (!stopWords.contains(word)) {
+        wordCounts[word] = (wordCounts[word] ?? 0) + 1;
+      }
     }
   }
 
@@ -52,8 +57,8 @@ Future<String> searchMeditationVideo() async {
   var mostFrequentWords = sortedWords.take(5).toList();
 
   // make the search query
-  var searchQuery = "meditation ${mostFrequentWords.join(' ')}";
-
+  var searchQuery = "meditation${mostFrequentWords.join(' ')}";
+  print(searchQuery);
   // query videos on youtube
   var url = Uri.https('www.googleapis.com', '/youtube/v3/search', {
     'key': _gcloudApiKey,
