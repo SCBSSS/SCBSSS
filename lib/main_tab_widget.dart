@@ -43,7 +43,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   Widget getTab(int index) {
     switch (index) {
       case 0:
-        return AddEntryTab(createOrUpdateEntry, _audioRecorder);
+        return AddEntryTab(createOrUpdateEntry, _audioRecorder,journalEntries: journalEntries,);
       case 1:
         return EntriesTab(journalEntries: journalEntries.value, audioRecorder: _audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntry);
       case 2:
