@@ -169,108 +169,90 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     //initialize
     super.initState();
+    _calendarFormat = CalendarFormat.month;
     _focusedDay = DateTime.now();
-    _selectedDay = _focusedDay;
+    _selectedDay = _focusedDay; //
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Calendar vieew')),
-      body: ListView.builder(
-        itemCount: 12, // Number of months in a year
-        itemBuilder: (context, index) {
-          // Calculate the first day of each month
-          DateTime firstDayOfMonth =
-              DateTime(DateTime.now().year, index + 1, 1);
-          // Calculate the last day of each month
-          DateTime lastDayOfMonth = DateTime(DateTime.now().year, index + 2, 0);
+    //incoperating tablecalendar
+    return TableCalendar(
+      firstDay: DateTime.utc(2010, 10, 16),
+      lastDay: DateTime.utc(2030, 3, 14),
+      focusedDay: _focusedDay,
+      calendarFormat: _calendarFormat,
+      selectedDayPredicate: (day) {
+        //code i will write later
+        return isSameDay(_selectedDay, day) ?? false;
+        //This gave an error without the 'null' even though it is not necesary becuase
+        //there should always be a current day selected.
+      },
 
-          return ExpansionTile(
-            title: Text(DateFormat('MMMM yyyy').format(firstDayOfMonth)),
-            children: [
-              Container(
-                height: 400, // Set a fixed height for the calendar
-                child: TableCalendar(
-                  firstDay: firstDayOfMonth,
-                  lastDay: lastDayOfMonth,
-                  focusedDay: _selectedDay ?? firstDayOfMonth,
-                  calendarFormat: CalendarFormat.month,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-
-                  headerStyle: HeaderStyle(
-                    formatButtonVisible: false, // Hides the format button
-                  ),
-
-                  //fetching the journal entry for the selected day "content"
-                  onDaySelected: (selectedDay, focusedDay) {
-                    final entries = findJournalEntryForDate(selectedDay);
-                    if (entries != null && entries.isNotEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(
-                            "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const Divider(
-                                    thickness: 1,
-                                    indent: 10,
-                                    endIndent: 10,
-                                    height: 0),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                ListBody(
-                                  children: entries.map((entry) {
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (entry.title != null)
-                                          Text("Title: ${entry.title}"),
-                                        if (entry.entry != null)
-                                          Text("Content: ${entry.entry}"),
-                                        if (entry.entry != null)
-                                          Text(
-                                              "Mood: ${getEmojiForMood(entry.mood)}"),
-                                        const SizedBox(
-                                          height: 40,
-                                        ),
-                                      ],
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('Close'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-
-                  onPageChanged: (focusedDay) {
-                    //updating page
-                    //no need to call (why?)
-                    _focusedDay = focusedDay;
-                  },
-                ),
+      calendarBuilders: CalendarBuilders(
+        defaultBuilder: (context, day, focusedDay) {
+          // Check if the day has journal entries using the datesWithEntries getter
+          bool hasEntries =
+              datesWithEntries.contains(DateTime(day.year, day.month, day.day));
+          return Center(
+            child: Text(
+              '${day.day}',
+              style: TextStyle(
+                color:
+                    hasEntries ? Color.fromARGB(255, 1, 77, 230) : Colors.black,
+                fontWeight: hasEntries
+                    ? FontWeight.bold
+                    : FontWeight
+                        .normal, // bold blue if it has entries, black if not
               ),
-            ],
+            ),
           );
         },
       ),
+
+      headerStyle: HeaderStyle(
+        formatButtonVisible: false, // Hides the format button
+      ),
+
+      //fetching the journal entry for the selected day "content"
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+        });
+        final entries = findJournalEntryForDate(selectedDay);
+        if (entries != null && entries.isNotEmpty) {
+          showModalBottomSheet(
+            //showing the journal entry through thr bottom sheet
+            context: context,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+
+            builder: (BuildContext context) {
+              return Container(
+                  constraints: BoxConstraints(maxHeight: 400),
+                  decoration: BoxDecoration(color: Colors.white),
+                  child: ListView.separated(
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      final item = entries[index];
+                      return JournalEntryView(item);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider(color: Color.fromARGB(255, 226, 225, 228));
+                    },
+                  ));
+            },
+          );
+        }
+      },
+
+      onPageChanged: (focusedDay) {
+        //updating page
+        //no need to call (why?)
+        _focusedDay = focusedDay;
+      },
     );
   }
 
