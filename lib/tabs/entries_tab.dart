@@ -176,20 +176,25 @@ class _CalendarViewState extends State<CalendarView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Calendar vieew')),
+      appBar: AppBar(title: const Text('Calendar View')),
       body: ListView.builder(
         itemCount: 12, // Number of months in a year
         itemBuilder: (context, index) {
           // Calculate the first day of each month
-          DateTime firstDayOfMonth =
-              DateTime(DateTime.now().year, index + 1, 1);
-          // Calculate the last day of each month
-          DateTime lastDayOfMonth = DateTime(DateTime.now().year, index + 2, 0);
+          DateTime firstDayOfMonth = DateTime(DateTime.now().year, index + 1, 1);
+          DateTime lastDayOfMonth = (index + 1 < 12)
+              ? DateTime(DateTime.now().year, index + 2, 0)
+              : DateTime(DateTime.now().year + 1, 1, 0);
+
+        // Ensure the focusedDay is not before the firstDay
+          if (_selectedDay!.isBefore(firstDayOfMonth)) {
+            _selectedDay = firstDayOfMonth;
+          }
 
           return ExpansionTile(
             title: Text(DateFormat('MMMM yyyy').format(firstDayOfMonth)),
             children: [
-              Container(
+              SizedBox(
                 height: 400, // Set a fixed height for the calendar
                 child: TableCalendar(
                   firstDay: firstDayOfMonth,
