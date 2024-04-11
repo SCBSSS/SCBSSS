@@ -9,11 +9,13 @@ import 'package:scbsss/tabs/settings_tab.dart';
 
 class MainTabWidget extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) updateEntryCallback;
   final ValueNotifier<List<JournalEntry>> journalEntries;
   final AudioRecorder _audioRecorder;
 
   MainTabWidget({
     Key? key,
+    required this.updateEntryCallback,
     required this.createNewEntryCallback,
     required this.journalEntries,
     required AudioRecorder audioRecorder,
@@ -22,16 +24,17 @@ class MainTabWidget extends StatefulWidget {
 
   @override
   State<MainTabWidget> createState() =>
-      _MainTabWidgetState(createNewEntryCallback, journalEntries, _audioRecorder);
+      _MainTabWidgetState(createNewEntryCallback,updateEntryCallback, journalEntries, _audioRecorder);
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
   final ValueNotifier<List<JournalEntry>> journalEntries;
   final void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) updateEntryCallback;
   int currentTabIndex = 0;
   final AudioRecorder _audioRecorder;
 
-  _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries, this._audioRecorder) {
+  _MainTabWidgetState(this.createNewEntryCallback,this.updateEntryCallback, this.journalEntries, this._audioRecorder) {
     journalEntries.addListener(() {
       setState(() {});
     });
@@ -40,9 +43,9 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   Widget getTab(int index) {
     switch (index) {
       case 0:
-        return AddEntryTab(createNewEntryCallback, _audioRecorder);
+        return AddEntryTab(createOrUpdateEntry, _audioRecorder);
       case 1:
-        return EntriesTab(journalEntries: journalEntries.value);
+        return EntriesTab(journalEntries: journalEntries.value, audioRecorder: _audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntry);
       case 2:
         return DataTab();
       case 3:
@@ -85,4 +88,13 @@ class _MainTabWidgetState extends State<MainTabWidget> {
       ),
     );
   }
+
+  void createOrUpdateEntry(JournalEntry entry, bool isNewEntry) {
+    if(isNewEntry) {
+      createNewEntryCallback(entry);
+    } else {
+      updateEntryCallback(entry);
+    }
+  }
+
 }

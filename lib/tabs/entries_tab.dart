@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scbsss/models/journal_entry.dart';
+import 'package:scbsss/services/audio_recorder.dart';
 import 'package:scbsss/views/journal_entry_view.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -8,24 +9,30 @@ import 'package:flutter/cupertino.dart';
 
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
+  final AudioRecorder audioRecorder;
+  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
 
-  const EntriesTab({required this.journalEntries, super.key});
+  const EntriesTab({required this.journalEntries, super.key, required this.audioRecorder, required this.createOrUpdateEntryCallback});
 
   @override
-  State<EntriesTab> createState() => _EntriesTabState();
+  State<EntriesTab> createState() => _EntriesTabState(audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback);
 }
 
 enum ViewType { timeline, calendar }
 
 class _EntriesTabState extends State<EntriesTab> {
   ViewType _viewType = ViewType.timeline; //default viewtype; timeline
+  final AudioRecorder audioRecorder;
+  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
 
+  _EntriesTabState({required this.audioRecorder, required this.createOrUpdateEntryCallback});
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildEntriesAppBar(),
       body: _viewType == ViewType.timeline
-          ? TimelineView(entries: widget.journalEntries)
+          ? TimelineView(entries: widget.journalEntries, audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback)
           : CalendarView(journalEntries: widget.journalEntries),
     );
   }
@@ -68,12 +75,15 @@ class _EntriesTabState extends State<EntriesTab> {
       ],
     );
   }
+
 }
 
 class TimelineView extends StatelessWidget {
   final List<JournalEntry> shownEntries;
 
-  TimelineView({required List<JournalEntry> entries, super.key})
+  final AudioRecorder audioRecorder;
+  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
+  TimelineView({required List<JournalEntry> entries,required this.audioRecorder,required this.createOrUpdateEntryCallback, super.key})
       : shownEntries = entries
             .where((element) => element.title != null || element.entry != null)
             .toList(growable: false);
@@ -88,7 +98,7 @@ class TimelineView extends StatelessWidget {
           }
           index--;
           final item = shownEntries[index];
-          return JournalEntryView(item);
+          return JournalEntryView(item,audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback);
         },
         separatorBuilder: (context, index) {
           bool showDate = false;

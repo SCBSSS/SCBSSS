@@ -17,4 +17,10 @@ class JournalManager {
     entry.id = insertedId;
     _journalEntries.value = List.from(_journalEntries.value)..add(entry);
   }
+
+  Future<void> entryUpdated(JournalEntry entry) async {
+    _journalEntries.notifyListeners();
+    await _databaseService.updateJournalEntry(entry);
+  }
+
 }

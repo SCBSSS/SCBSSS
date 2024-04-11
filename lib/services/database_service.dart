@@ -214,4 +214,16 @@ class DatabaseService {
     return List.generate(
         result.length, (index) => Setting.fromMap(result[index]));
   }
+
+  Future<int> updateJournalEntry(JournalEntry journalEntry) async {
+    final db = await instance.database;
+    final updatedRows = await db.update(
+      'journal_entries',
+      journalEntry.toMapDbString(),
+      where: 'id = ?',
+      whereArgs: [journalEntry.id],
+    );
+
+    return updatedRows;
+  }
 }

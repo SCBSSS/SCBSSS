@@ -9,16 +9,27 @@ import '../services/audio_transcription.dart';
 import '../services/sentiment_analysis.dart';
 
 class AddEntryTab extends StatefulWidget {
-  final void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
   final AudioRecorder _audioRecorder;
   final AudioTranscription _audioTranscription;
+  final JournalEntry? existingEntry;
+  final void Function()? onSubmitCallback;
 
-  AddEntryTab(this.createNewEntryCallback, this._audioRecorder)
-      : _audioTranscription = AudioTranscription();
+  AddEntryTab(
+    this.createOrUpdateEntryCallback,
+    this._audioRecorder, {
+    this.existingEntry,
+    this.onSubmitCallback,
+  }) : _audioTranscription = AudioTranscription();
 
   @override
-  _AddEntryTabState createState() =>
-      _AddEntryTabState(createNewEntryCallback, _audioRecorder);
+  _AddEntryTabState createState() => _AddEntryTabState(
+        createOrUpdateEntryCallback,
+        _audioRecorder,
+        existingEntry: existingEntry,
+        onSubmitCallback: onSubmitCallback,
+      );
 }
 
 enum RecordingState {
@@ -36,8 +47,23 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final AudioRecorder _audioRecorder;
   var currentRecordingPath = "";
   var recordingState = RecordingState.ready;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
+  final void Function()? onSubmitCallback;
 
-  void Function(JournalEntry entry) createNewEntryCallback;
+  final JournalEntry? existingEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = existingEntry;
+    if (existing != null) {
+      _titleController.text = existing.title ?? '';
+      _entryController.text = existing.entry ?? '';
+      _currentMoodValue = existingEntry!.mood.toDouble();
+      _selectedMoodIndex = existingEntry!.mood - 1;
+    }
+  }
 
   void clearFields() {
     _titleController.clear();
@@ -48,12 +74,25 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   void onSubmit() {
-    JournalEntry entry = JournalEntry(
+    if (existingEntry != null) {
+      // Update existing entry
+      existingEntry!.title = _titleController.text;
+      existingEntry!.entry = _entryController.text;
+      existingEntry!.mood = _currentMoodValue.toInt();
+      createOrUpdateEntryCallback(existingEntry!, false);
+      if (onSubmitCallback != null) {
+        onSubmitCallback!();
+      }
+    } else {
+      // Create new entry
+      JournalEntry entry = JournalEntry(
         mood: _currentMoodValue.toInt(),
         title: _titleController.text,
         entry: _entryController.text,
-        date: DateTime.now());
-    createNewEntryCallback(entry);
+        date: DateTime.now(),
+      );
+      createOrUpdateEntryCallback(entry, true);
+    }
     clearFields();
   }
 
@@ -95,66 +134,64 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   void handleTranscribeButton() async {
-      switch (recordingState) {
-        case RecordingState.recording:
-          await _audioRecorder.stopRecorder();
-          setState(() {
-            recordingState = RecordingState.transcribing;
-          });
-          String transcription = await widget._audioTranscription
-              .transcribeAudio(
-                  audioFilePath: currentRecordingPath,
-                  prompt: _entryController.text);
-          if(_entryController.text.endsWith(" ") || _entryController.text.endsWith("\n")) {
-            _entryController.text += transcription;
-          } else {
-            _entryController.text += ' ';
-            _entryController.text += transcription;
-          }
-          setState(() {
-            recordingState = RecordingState.ready;
-          });
-          if(_titleController.text.isEmpty){
-            insertGeneratedTitle();
-          }
-          detectSentiment();
-          break;
-        case RecordingState.transcribing:
-          break;
-        case RecordingState.ready:
-          currentRecordingPath = await _audioRecorder.record();
-          setState(() {
-            recordingState = RecordingState.recording;
-          });
-          break;
-      }
+    switch (recordingState) {
+      case RecordingState.recording:
+        await _audioRecorder.stopRecorder();
+        setState(() {
+          recordingState = RecordingState.transcribing;
+        });
+        String transcription = await widget._audioTranscription.transcribeAudio(
+            audioFilePath: currentRecordingPath, prompt: _entryController.text);
+        if (_entryController.text.endsWith(" ") ||
+            _entryController.text.endsWith("\n")) {
+          _entryController.text += transcription;
+        } else {
+          _entryController.text += ' ';
+          _entryController.text += transcription;
+        }
+        setState(() {
+          recordingState = RecordingState.ready;
+        });
+        if (_titleController.text.isEmpty) {
+          insertGeneratedTitle();
+        }
+        detectSentiment();
+        break;
+      case RecordingState.transcribing:
+        break;
+      case RecordingState.ready:
+        currentRecordingPath = await _audioRecorder.record();
+        setState(() {
+          recordingState = RecordingState.recording;
+        });
+        break;
     }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset:
-          true, // Ensures the scaffold resizes when the keyboard appears
-      appBar: AppBar(
-          //removed "add entry" to keep it more clean and simple
-          ),
-      body: SingleChildScrollView(
+    var topText = (existingEntry == null)
+        ? 'Hi! \nHow are you feeling today?'
+        : "Edit Entry";
+    return SafeArea(
+      child: SingleChildScrollView(
         // Makes the body scrollable
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment
-                  .start, // Aligns the children at the start of the column
-              crossAxisAlignment: CrossAxisAlignment
-                  .stretch, // Stretches the children to fit the width of the column
+              mainAxisAlignment: MainAxisAlignment.start,
+              // Aligns the children at the start of the column
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              // Stretches the children to fit the width of the column
               children: [
-                const SizedBox(
-                    height:
-                        16), // You can adjust this value if you want more or less space at the top
-                const Text(
-                  'Hi! \nHow are you feeling today?',
+                if (existingEntry == null) const SizedBox(height: 16),
+                // You can adjust this value if you want more or less space at the top
+                Text(
+                  (existingEntry == null)
+                      ? 'Hi! \nHow are you feeling today?'
+                      : "Edit Entry",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24),
                 ),
@@ -181,7 +218,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
                   }).toList(),
                 ),
 
-                const SizedBox(height: 8), //space after emoji
+                const SizedBox(height: 8),
+                //space after emoji
 
                 //adding back the slider // Slider
                 //slider labels 1-5
@@ -195,15 +233,13 @@ class _AddEntryTabState extends State<AddEntryTab> {
                         decoration: InputDecoration(
                             labelText: 'Title',
                             border: OutlineInputBorder(),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5)),
                       ),
-
                     ),
                     IconButton(
-                      onPressed: insertGeneratedTitle,
-                      icon: const Icon(CupertinoIcons.sparkles)
-                    ),
+                        onPressed: insertGeneratedTitle,
+                        icon: const Icon(CupertinoIcons.sparkles)),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -220,17 +256,17 @@ class _AddEntryTabState extends State<AddEntryTab> {
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
                 ),
 
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  getRecordingButton(),
-                  SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: onSubmit,
-                    child: Icon(CupertinoIcons.arrow_right),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    getRecordingButton(),
+                    SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: onSubmit,
+                      child: Icon(CupertinoIcons.arrow_right),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -238,7 +274,6 @@ class _AddEntryTabState extends State<AddEntryTab> {
       ),
     );
   }
-
 
   @override
   void dispose() {
@@ -248,7 +283,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
     super.dispose();
   }
 
-  _AddEntryTabState(this.createNewEntryCallback, this._audioRecorder);
+  _AddEntryTabState(this.createOrUpdateEntryCallback, this._audioRecorder,
+      {this.existingEntry, this.onSubmitCallback});
 
   detectSentiment() {
     final s = analyzeSentiment(_entryController.text);
@@ -257,11 +293,13 @@ class _AddEntryTabState extends State<AddEntryTab> {
           if (moodval <= 0)
             moodval = 1.0;
           else if (moodval >= 5) moodval = 5.0; //moodval NOT index
-          _onEmojiSelected(moodval.toInt() - 1); //passing in the index NOT the moodval
+          _onEmojiSelected(
+              moodval.toInt() - 1); //passing in the index NOT the moodval
         }));
   }
 
   void insertGeneratedTitle() {
-    generateTitle(_entryController.text).then((value) => _titleController.text = value);
+    generateTitle(_entryController.text)
+        .then((value) => _titleController.text = value);
   }
 }
