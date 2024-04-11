@@ -50,7 +50,7 @@ dependencies:
   permission_handler: ^11.3.0
   audio_session: ^0.1.18
   uuid: ^4.3.3
-
+  youtube_player_flutter: ^8.1.2
 
 dev_dependencies:
   flutter_test:
