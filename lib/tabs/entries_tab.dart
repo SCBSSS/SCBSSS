@@ -178,17 +178,19 @@ class _CalendarViewState extends State<CalendarView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Calendar View')),
       body: ListView.builder(
-        itemCount: 12, // Number of months in a year
+        itemCount: 12, // number of months in a year
         itemBuilder: (context, index) {
-          // Calculate the first day of each month
+          // calculate the first day of each month
           DateTime firstDayOfMonth = DateTime(DateTime.now().year, index + 1, 1);
           DateTime lastDayOfMonth = (index + 1 < 12)
               ? DateTime(DateTime.now().year, index + 2, 0)
               : DateTime(DateTime.now().year + 1, 1, 0);
 
-        // Ensure the focusedDay is not before the firstDay
+// ensure the focusedDay is not before the firstDay and not after the lastDay
           if (_selectedDay!.isBefore(firstDayOfMonth)) {
             _selectedDay = firstDayOfMonth;
+          } else if (_selectedDay!.isAfter(lastDayOfMonth)) {
+            _selectedDay = lastDayOfMonth;
           }
 
           return ExpansionTile(
