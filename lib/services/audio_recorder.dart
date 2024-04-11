@@ -21,7 +21,7 @@ class AudioRecorder {
       _mRecorderIsInited = true;
     });
   }
-  String genRandomFilename(){
+  String genRandomFilename() {
     return "$recordingPath/${_uuid.v4()}.mp4";
   }
 
@@ -35,7 +35,7 @@ class AudioRecorder {
     var status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
       print("Status: $status");
-      throw RecordingPermissionException('Microphone permission not granted');
+      // throw RecordingPermissionException('Microphone permission not granted');
     }
     await _mRecorder!.openRecorder();
 

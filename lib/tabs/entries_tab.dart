@@ -59,8 +59,7 @@ class _EntriesTabState extends State<EntriesTab> {
             ],
             onToggle: (index) {
               setState(() {
-                _viewType =
-                    index == 0 ? ViewType.timeline : ViewType.calendar;
+                _viewType = index == 0 ? ViewType.timeline : ViewType.calendar;
               });
             },
           ),
@@ -149,9 +148,11 @@ class _CalendarViewState extends State<CalendarView> {
   List<JournalEntry>? findJournalEntryForDate(DateTime date) {
     //  to find a journal entry within a specific date
     try {
-      return widget.journalEntries.where(
-        (entry) => isSameDay(entry.date, date),
-      ).toList();
+      return widget.journalEntries
+          .where(
+            (entry) => isSameDay(entry.date, date),
+          )
+          .toList();
     } catch (e) {
       return null; //if no entry
     }
@@ -168,120 +169,119 @@ class _CalendarViewState extends State<CalendarView> {
   void initState() {
     //initialize
     super.initState();
-    _calendarFormat = CalendarFormat.month;
     _focusedDay = DateTime.now();
     _selectedDay = _focusedDay;
   }
 
   @override
   Widget build(BuildContext context) {
-    //incoperating tablecalendar
-    return TableCalendar(
-      firstDay: DateTime.utc(2010, 10, 16),
-      lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: _focusedDay,
-      calendarFormat: _calendarFormat,
-      selectedDayPredicate: (day) {
-        //code i will write later
-        return isSameDay(_selectedDay, day) ?? false;
-        //This gave an error without the 'null' even though it is not necesary becuase
-        //there should always be a current day selected.
-      },
+    return Scaffold(
+      appBar: AppBar(title: const Text('Calendar View')),
+      body: ListView.builder(
+        itemCount: 12, // Number of months in a year
+        itemBuilder: (context, index) {
+          // Calculate the first day of each month
+          DateTime firstDayOfMonth = DateTime(DateTime.now().year, index + 1, 1);
+          DateTime lastDayOfMonth = (index + 1 < 12)
+              ? DateTime(DateTime.now().year, index + 2, 0)
+              : DateTime(DateTime.now().year + 1, 1, 0);
 
-      //fetching the journal entry for the selected day "content"
-      onDaySelected: (selectedDay, focusedDay) {
-        final entries = findJournalEntryForDate(selectedDay);
-        if (entries != null && entries.isNotEmpty) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(
-                  "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
-                  style: const TextStyle(
-                    fontSize: 20
-                  ),),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const Divider(
-                      thickness: 1,
-                      indent: 10,
-                      endIndent: 10,
-                      height: 0
-                    ),
-                    const SizedBox(height: 20,),
-                    ListBody(
-                      children: entries.map((entry) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (entry.title != null) Text("Title: ${entry.title}"),
-                            if (entry.entry != null) Text("Content: ${entry.entry}"),
-                            if (entry.entry != null) Text("Mood: ${getEmojiForMood(entry.mood)}"),
-                            const SizedBox(height: 40,),
+        // Ensure the focusedDay is not before the firstDay
+          if (_selectedDay!.isBefore(firstDayOfMonth)) {
+            _selectedDay = firstDayOfMonth;
+          }
+
+          return ExpansionTile(
+            title: Text(DateFormat('MMMM yyyy').format(firstDayOfMonth)),
+            children: [
+              SizedBox(
+                height: 400, // Set a fixed height for the calendar
+                child: TableCalendar(
+                  firstDay: firstDayOfMonth,
+                  lastDay: lastDayOfMonth,
+                  focusedDay: _selectedDay ?? firstDayOfMonth,
+                  calendarFormat: CalendarFormat.month,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+
+                  headerStyle: HeaderStyle(
+                    formatButtonVisible: false, // Hides the format button
+                  ),
+
+                  //fetching the journal entry for the selected day "content"
+                  onDaySelected: (selectedDay, focusedDay) {
+                    final entries = findJournalEntryForDate(selectedDay);
+                    if (entries != null && entries.isNotEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const Divider(
+                                    thickness: 1,
+                                    indent: 10,
+                                    endIndent: 10,
+                                    height: 0),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                ListBody(
+                                  children: entries.map((entry) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (entry.title != null)
+                                          Text("Title: ${entry.title}"),
+                                        if (entry.entry != null)
+                                          Text("Content: ${entry.entry}"),
+                                        if (entry.entry != null)
+                                          Text(
+                                              "Mood: ${getEmojiForMood(entry.mood)}"),
+                                        const SizedBox(
+                                          height: 40,
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Close'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
                           ],
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Close'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
+                        ),
+                      );
+                    }
+                  },
+
+                  onPageChanged: (focusedDay) {
+                    //updating page
+                    //no need to call (why?)
+                    _focusedDay = focusedDay;
                   },
                 ),
-              ],
-            ),
+              ),
+            ],
           );
-        }
-      },
-
-      onFormatChanged: (format) {
-        //format of the calendar changing (might change this UI function)
-        if (_calendarFormat != format) {
-          //call
-          setState(() {
-            _calendarFormat = format;
-          });
-        }
-      },
-      onPageChanged: (focusedDay) {
-        //updating page
-        //no need to call (why?)
-        _focusedDay = focusedDay;
-      },
-
-      /* calendarBuilders: CalendarBuilders(
-        defaultBuilder: (context, day, focusedDay) {
-          // Check if this day has an entry
-          if (datesWithEntries.contains(day)) {
-            // If it does, return a widget with a blue circle
-            return Container(
-              margin: const EdgeInsets.all(4.0),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.transparent, // or any color that fits your design
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.blue, width: 2),
-              ),
-              child: Text(
-                day.day.toString(),
-                style: const TextStyle(color: Colors.blue),
-              ),
-            );
-          }
-          // If not, return a default widget
-          return null;
         },
-      ),*/
+      ),
     );
   }
 
   String getEmojiForMood(int mood) {
     List<String> moodEmojis = ['😡', '😢', '😐', '😊', '😁']; //moods are 1-5
-    return moodEmojis[mood - 1]; //so subtracting 1 from the mood gets the associated emoji we want
+    return moodEmojis[mood -
+        1]; //so subtracting 1 from the mood gets the associated emoji we want
   }
 }
