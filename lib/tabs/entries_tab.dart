@@ -186,6 +186,13 @@ class _CalendarViewState extends State<CalendarView> {
               ? DateTime(DateTime.now().year, index + 2, 0)
               : DateTime(DateTime.now().year + 1, 1, 0);
 
+// Ensure the focusedDay is not before the firstDay and not after the lastDay
+          if (_selectedDay!.isBefore(firstDayOfMonth)) {
+            _selectedDay = firstDayOfMonth;
+          } else if (_selectedDay!.isAfter(lastDayOfMonth)) {
+            _selectedDay = lastDayOfMonth;
+          }
+
 // ensure the focusedDay is not before the firstDay and not after the lastDay
           if (_selectedDay!.isBefore(firstDayOfMonth)) {
             _selectedDay = firstDayOfMonth;
