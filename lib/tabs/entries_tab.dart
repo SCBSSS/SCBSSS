@@ -182,12 +182,13 @@ class _CalendarViewState extends State<CalendarView> {
         itemCount: 12, // number of months in a year
         itemBuilder: (context, index) {
           // calculate the first day of each month
-          DateTime firstDayOfMonth = DateTime(DateTime.now().year, index + 1, 1);
+          DateTime firstDayOfMonth =
+              DateTime(DateTime.now().year, index + 1, 1);
           DateTime lastDayOfMonth = (index + 1 < 12)
               ? DateTime(DateTime.now().year, index + 2, 0)
               : DateTime(DateTime.now().year + 1, 1, 0);
 
-// ensure the focusedDay is not before the firstDay and not after the lastDay
+          // ensure the focusedDay is not before the firstDay and not after the lastDay
           if (_selectedDay!.isBefore(firstDayOfMonth)) {
             _selectedDay = firstDayOfMonth;
           } else if (_selectedDay!.isAfter(lastDayOfMonth)) {
@@ -205,135 +206,69 @@ class _CalendarViewState extends State<CalendarView> {
                   focusedDay: _selectedDay ?? firstDayOfMonth,
                   calendarFormat: CalendarFormat.month,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-
                   headerStyle: HeaderStyle(
-                    formatButtonVisible: false, // Hides the format button
+                      formatButtonVisible: false), // Hides the format button
+                  calendarBuilders: CalendarBuilders(
+                    defaultBuilder: (context, day, focusedDay) {
+                      bool hasEntries = datesWithEntries
+                          .contains(DateTime(day.year, day.month, day.day));
+                      return Center(
+                        child: Text(
+                          '${day.day}',
+                          style: TextStyle(
+                            color: hasEntries
+                                ? Color.fromARGB(255, 1, 77, 230)
+                                : Colors.black,
+                            fontWeight: hasEntries
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-
-                  //fetching the journal entry for the selected day "content"
                   onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
                     final entries = findJournalEntryForDate(selectedDay);
                     if (entries != null && entries.isNotEmpty) {
-                      showDialog(
+                      showModalBottomSheet(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(
-                            "Journal Entries for ${DateFormat('yMMMd').format(selectedDay)}",
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const Divider(
-                                    thickness: 1,
-                                    indent: 10,
-                                    endIndent: 10,
-                                    height: 0),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                ListBody(
-                                  children: entries.map((entry) {
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (entry.title != null)
-                                          Text("Title: ${entry.title}"),
-                                        if (entry.entry != null)
-                                          Text("Content: ${entry.entry}"),
-                                        if (entry.entry != null)
-                                          Text(
-                                              "Mood: ${getEmojiForMood(entry.mood)}"),
-                                        const SizedBox(
-                                          height: 40,
-                                        ),
-                                      ],
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('Close'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
+                        builder: (BuildContext context) {
+                          return Container(
+                              constraints: BoxConstraints(maxHeight: 400),
+                              decoration: BoxDecoration(color: Colors.white),
+                              child: ListView.separated(
+                                itemCount: entries.length,
+                                itemBuilder: (context, index) {
+                                  final item = entries[index];
+                                  return JournalEntryView(item);
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                      color:
+                                          Color.fromARGB(255, 226, 225, 228));
+                                },
+                              ));
+                        },
                       );
                     }
                   },
-
-      calendarBuilders: CalendarBuilders(
-        defaultBuilder: (context, day, focusedDay) {
-          // Check if the day has journal entries using the datesWithEntries getter
-          bool hasEntries =
-              datesWithEntries.contains(DateTime(day.year, day.month, day.day));
-          return Center(
-            child: Text(
-              '${day.day}',
-              style: TextStyle(
-                color:
-                    hasEntries ? Color.fromARGB(255, 1, 77, 230) : Colors.black,
-                fontWeight: hasEntries
-                    ? FontWeight.bold
-                    : FontWeight
-                        .normal, // bold blue if it has entries, black if not
+                  onPageChanged: (focusedDay) {
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  },
+                ),
               ),
-            ),
+            ],
           );
         },
       ),
-
-      headerStyle: HeaderStyle(
-        formatButtonVisible: false, // Hides the format button
-      ),
-
-      //fetching the journal entry for the selected day "content"
-      onDaySelected: (selectedDay, focusedDay) {
-        setState(() {
-          _selectedDay = selectedDay;
-          _focusedDay = focusedDay;
-        });
-        final entries = findJournalEntryForDate(selectedDay);
-        if (entries != null && entries.isNotEmpty) {
-          showModalBottomSheet(
-            //showing the journal entry through thr bottom sheet
-            context: context,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-
-            builder: (BuildContext context) {
-              return Container(
-                  constraints: BoxConstraints(maxHeight: 400),
-                  decoration: BoxDecoration(color: Colors.white),
-                  child: ListView.separated(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      final item = entries[index];
-                      return JournalEntryView(item);
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider(color: Color.fromARGB(255, 226, 225, 228));
-                    },
-                  ));
-            },
-          );
-        }
-      },
-
-      onPageChanged: (focusedDay) {
-        //updating page
-        //no need to call (why?)
-        _focusedDay = focusedDay;
-      },
-    );
-  }
+    ); // Closes Scaffold
+  } // Closes build method
 
   String getEmojiForMood(int mood) {
     List<String> moodEmojis = ['😡', '😢', '😐', '😊', '😁']; //moods are 1-5
