@@ -214,4 +214,19 @@ class DatabaseService {
     return List.generate(
         result.length, (index) => Setting.fromMap(result[index]));
   }
+
+  Future<List<JournalEntry>> getLatestJournalEntries(int count) async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.query(
+      'journal_entries',
+      orderBy: 'date DESC',
+      limit: count,
+    );
+
+    return List.generate(
+      result.length,
+          (index) => JournalEntry.fromMap(result[index]),
+    );
+  }
 }

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<double> analyzeSentiment(String input) async {
-  final String apiKey = dotenv.get('GCLOUD_API_KEY');
+  final String apiKey = dotenv.get('GCLOUD_API_KEY_sentiment');
   final String apiUrl =
       'https://language.googleapis.com/v1/documents:analyzeSentiment?key=$apiKey';
 
