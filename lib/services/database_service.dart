@@ -29,6 +29,7 @@ class DatabaseService {
 
   Future<Database> _initDB(String dbName) async {
     final databasesPath = await getDatabasesPath();
+    print("dbPath: "+databasesPath);
     final dbPath = join(databasesPath, dbName);
 
     if (reSeed) {
@@ -161,9 +162,9 @@ class DatabaseService {
       ),
     ];
 
-    for (var journalEntry in dummyJournalEntries) {
-      await DatabaseService.instance.insertJournalEntry(journalEntry);
-    }
+    // for (var journalEntry in dummyJournalEntries) {
+    //   await DatabaseService.instance.insertJournalEntry(journalEntry);
+    // }
 
     print('seed | Finished');
     return;
@@ -228,5 +229,17 @@ class DatabaseService {
       result.length,
           (index) => JournalEntry.fromMap(result[index]),
     );
+  }
+
+  Future<int> updateJournalEntry(JournalEntry journalEntry) async {
+    final db = await instance.database;
+    final updatedRows = await db.update(
+      'journal_entries',
+      journalEntry.toMapDbString(),
+      where: 'id = ?',
+      whereArgs: [journalEntry.id],
+    );
+
+    return updatedRows;
   }
 }
