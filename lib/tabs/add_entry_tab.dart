@@ -14,7 +14,7 @@ class AddEntryTab extends StatefulWidget {
       createOrUpdateEntryCallback;
   final AudioRecorder _audioRecorder;
   final AudioTranscription _audioTranscription;
-  final ValueNotifier<List<JournalEntry>> journalEntries;
+  final ValueNotifier<List<JournalEntry>>? journalEntries;
   final JournalEntry? existingEntry;
   final void Function()? onSubmitCallback;
 
@@ -23,7 +23,7 @@ class AddEntryTab extends StatefulWidget {
     this._audioRecorder, {
     this.existingEntry,
     this.onSubmitCallback,
-        required this.journalEntries
+        this.journalEntries
   }) : _audioTranscription = AudioTranscription();
 
   @override
@@ -32,6 +32,7 @@ class AddEntryTab extends StatefulWidget {
         _audioRecorder,
         existingEntry: existingEntry,
         onSubmitCallback: onSubmitCallback,
+    journalEntries: this.journalEntries
       );
 }
 
@@ -51,7 +52,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   var currentRecordingPath = "";
   var recordingState = RecordingState.ready;
   List<String>? promptQuestions = null;
-  final ValueNotifier<List<JournalEntry>> journalEntries;
+  final ValueNotifier<List<JournalEntry>>? journalEntries;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
   final void Function()? onSubmitCallback;
@@ -251,6 +252,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 TextFormField(
                   controller: _entryController,
                   keyboardType: TextInputType.multiline, //many lines
+                  maxLines: existingEntry == null ? 1:10,
                   decoration: InputDecoration(
                       labelText: 'Entry',
                       border: OutlineInputBorder(),
@@ -291,8 +293,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
 
   _AddEntryTabState(this.createOrUpdateEntryCallback, this._audioRecorder,
       {this.existingEntry, this.onSubmitCallback,this.journalEntries}){
-    generatePromptQuestions()
-  };
+    generatePromptQuestions();
+  }
 
   detectSentiment() {
     final s = analyzeSentiment(_entryController.text);
@@ -308,7 +310,10 @@ class _AddEntryTabState extends State<AddEntryTab> {
 
   generatePromptQuestions() {
     //Select past entries
-    final entries = journalEntries.value;
+    if(journalEntries == null){
+      return;
+    }
+    final entries = journalEntries!.value;
     if(entries.length < 3){
       return;
     }
