@@ -174,7 +174,7 @@ class _CalendarViewState extends State<CalendarView> {
     _selectedDay = _focusedDay; //
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Calendar View')),
@@ -207,7 +207,14 @@ class _CalendarViewState extends State<CalendarView> {
                   calendarFormat: CalendarFormat.month,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   headerStyle: HeaderStyle(
-                      formatButtonVisible: false), // Hides the format button
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                    leftChevronVisible: false, // hides the left arrow
+                    rightChevronVisible: false,
+                  ), // Hides the format button
+
+                  // headerVisible: false,
+
                   calendarBuilders: CalendarBuilders(
                     defaultBuilder: (context, day, focusedDay) {
                       bool hasEntries = datesWithEntries
