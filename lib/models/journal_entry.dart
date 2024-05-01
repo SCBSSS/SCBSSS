@@ -6,6 +6,7 @@ class JournalEntry {
   String? title; // Optional title for the mood entry
   String? entry; // Optional mood text
   DateTime date; // Timestamp for when the mood entry was created
+  String? promptQuestion;
 
   JournalEntry({
     this.id,
@@ -13,6 +14,7 @@ class JournalEntry {
     this.title = '',
     this.entry = '',
     required this.date,
+    this.promptQuestion='',
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +24,7 @@ class JournalEntry {
       'title': title,
       'entry': entry,
       'date': date,
+      'prompt_question': promptQuestion,
     };
   }
 
@@ -42,6 +45,7 @@ class JournalEntry {
       title: map['title'],
       entry: map['entry'],
       date: DateTime.parse(map['date']),
+      promptQuestion: map['prompt_question'],
     );
   }
 
@@ -52,6 +56,6 @@ class JournalEntry {
 
   @override
   String toString() {
-    return 'JournalEntry(id: $id, mood: $mood, title: $title, entry: $entry, date: $date)';
+    return 'JournalEntry(id: $id, mood: $mood, title: $title, entry: $entry, date: $date, $promptQuestion)';
   }
 }

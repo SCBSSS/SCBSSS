@@ -11,11 +11,13 @@ import 'package:scbsss/tabs/well-being.dart';
 
 class MainTabWidget extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) updateEntryCallback;
   final ValueNotifier<List<JournalEntry>> journalEntries;
   final AudioRecorder _audioRecorder;
 
   MainTabWidget({
     Key? key,
+    required this.updateEntryCallback,
     required this.createNewEntryCallback,
     required this.journalEntries,
     required AudioRecorder audioRecorder,
@@ -24,17 +26,18 @@ class MainTabWidget extends StatefulWidget {
 
   @override
   State<MainTabWidget> createState() =>
-      _MainTabWidgetState(createNewEntryCallback, journalEntries, _audioRecorder);
+      _MainTabWidgetState(createNewEntryCallback,updateEntryCallback, journalEntries, _audioRecorder);
 }
 
 class _MainTabWidgetState extends State<MainTabWidget> {
   final ValueNotifier<List<JournalEntry>> journalEntries;
   final void Function(JournalEntry entry) createNewEntryCallback;
+  final void Function(JournalEntry entry) updateEntryCallback;
   int currentTabIndex = 0;
   final AudioRecorder _audioRecorder;
   late PageController _pageController;
 
-  _MainTabWidgetState(this.createNewEntryCallback, this.journalEntries, this._audioRecorder) {
+  _MainTabWidgetState(this.createNewEntryCallback,this.updateEntryCallback, this.journalEntries, this._audioRecorder) {
     journalEntries.addListener(() {
       setState(() {});
     });
@@ -59,8 +62,8 @@ class _MainTabWidgetState extends State<MainTabWidget> {
         },
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          AddEntryTab(createNewEntryCallback, _audioRecorder),
-          EntriesTab(journalEntries: journalEntries.value),
+          AddEntryTab(createOrUpdateEntry, _audioRecorder,journalEntries: journalEntries,),
+          EntriesTab(audioRecorder: _audioRecorder,journalEntries: journalEntries.value, createOrUpdateEntryCallback: createOrUpdateEntry),
           DataTab(),
           WellBeing(),
           SettingsTab(),
@@ -93,11 +96,20 @@ class _MainTabWidgetState extends State<MainTabWidget> {
               setState(() {
                 currentTabIndex = index;
               });
-              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut); 
+              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut);
             },
           ),
         ),
       ),
     );
   }
+
+  void createOrUpdateEntry(JournalEntry entry, bool isNewEntry) {
+    if(isNewEntry) {
+      createNewEntryCallback(entry);
+    } else {
+      updateEntryCallback(entry);
+    }
+  }
+
 }

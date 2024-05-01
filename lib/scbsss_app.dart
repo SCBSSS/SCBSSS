@@ -47,6 +47,11 @@ class _SCBSSSState extends State<SCBSSSApp> {
     });
   }
 
+  void updateEntry(JournalEntry entry) {
+    setState(() {
+      journalManager.entryUpdated(entry);
+    });
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -69,7 +74,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
         useMaterial3: true,
       ),
       home: isSetupDone
-          ? MainTabWidget(audioRecorder: audioRecorder, createNewEntryCallback: createNewEntry, journalEntries: journalManager.journalEntries)
+          ? MainTabWidget(audioRecorder: audioRecorder, createNewEntryCallback: createNewEntry,updateEntryCallback: updateEntry, journalEntries: journalManager.journalEntries)
           : SetupWizard(completeSetup),
     );
   }

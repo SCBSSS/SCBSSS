@@ -43,7 +43,7 @@ class DatabaseService {
 
     return await openDatabase(
       dbPath,
-      version: 8,
+      version: 9,
       onCreate: (db, version) {
         return migrationPlan(db, version);
       },
@@ -124,6 +124,12 @@ class DatabaseService {
           reverseSql:
               'ALTER TABLE journal_entries RENAME COLUMN date TO timestamp;')
     ],
+    9: [
+      SqlMigration(
+          'ALTER TABLE journal_entries ADD COLUMN prompt_question TEXT NULL;',
+          reverseSql:
+          'ALTER TABLE journal_entries DROP COLUMN prompt_question;')
+    ]
   });
 
   Future<void> seedDatabase() async {
@@ -253,5 +259,17 @@ class DatabaseService {
       result.length,
           (index) => JournalEntry.fromMap(result[index]),
     );
+  }
+
+  Future<int> updateJournalEntry(JournalEntry journalEntry) async {
+    final db = await instance.database;
+    final updatedRows = await db.update(
+      'journal_entries',
+      journalEntry.toMapDbString(),
+      where: 'id = ?',
+      whereArgs: [journalEntry.id],
+    );
+
+    return updatedRows;
   }
 }
