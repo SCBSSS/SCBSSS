@@ -18,22 +18,16 @@ class AddEntryTab extends StatefulWidget {
   final JournalEntry? existingEntry;
   final void Function()? onSubmitCallback;
 
-  AddEntryTab(
-    this.createOrUpdateEntryCallback,
-    this._audioRecorder, {
-    this.existingEntry,
-    this.onSubmitCallback,
-        this.journalEntries
-  }) : _audioTranscription = AudioTranscription();
+  AddEntryTab(this.createOrUpdateEntryCallback, this._audioRecorder,
+      {this.existingEntry, this.onSubmitCallback, this.journalEntries})
+      : _audioTranscription = AudioTranscription();
 
   @override
-  _AddEntryTabState createState() => _AddEntryTabState(
-        createOrUpdateEntryCallback,
-        _audioRecorder,
-        existingEntry: existingEntry,
-        onSubmitCallback: onSubmitCallback,
-    journalEntries: this.journalEntries
-      );
+  _AddEntryTabState createState() =>
+      _AddEntryTabState(createOrUpdateEntryCallback, _audioRecorder,
+          existingEntry: existingEntry,
+          onSubmitCallback: onSubmitCallback,
+          journalEntries: this.journalEntries);
 }
 
 enum RecordingState {
@@ -56,7 +50,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
   final void Function()? onSubmitCallback;
-
+  String? _promptQuestion = null;
   final JournalEntry? existingEntry;
 
   @override
@@ -96,6 +90,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
         title: _titleController.text,
         entry: _entryController.text,
         date: DateTime.now(),
+        promptQuestion: _promptQuestion,
       );
       createOrUpdateEntryCallback(entry, true);
     }
@@ -176,9 +171,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
 
   @override
   Widget build(BuildContext context) {
-    var topText = (existingEntry == null)
-        ? 'How are you feeling today?'
-        : "Edit Entry";
+    var topText =
+        (existingEntry == null) ? 'How are you feeling today?' : "Edit Entry";
     final currentPromptQuestions = promptQuestions;
     return SafeArea(
       child: SingleChildScrollView(
@@ -195,7 +189,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
               children: [
                 if (existingEntry == null) const SizedBox(height: 16),
                 // You can adjust this value if you want more or less space at the top
-                Text(topText,
+                Text(
+                  topText,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24),
                 ),
@@ -222,7 +217,8 @@ class _AddEntryTabState extends State<AddEntryTab> {
                   }).toList(),
                 ),
 
-                const SizedBox(height: 8), //space after emoji
+                const SizedBox(height: 8),
+                //space after emoji
 
                 //adding back the slider // Slider
                 //slider labels 1-5
@@ -236,15 +232,13 @@ class _AddEntryTabState extends State<AddEntryTab> {
                         decoration: InputDecoration(
                             labelText: 'Title',
                             border: OutlineInputBorder(),
-                            contentPadding:
-                                EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5)),
                       ),
-
                     ),
                     IconButton(
-                      onPressed: insertGeneratedTitle,
-                      icon: const Icon(CupertinoIcons.sparkles)
-                    ),
+                        onPressed: insertGeneratedTitle,
+                        icon: const Icon(CupertinoIcons.sparkles)),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -252,7 +246,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 TextFormField(
                   controller: _entryController,
                   keyboardType: TextInputType.multiline, //many lines
-                  maxLines: existingEntry == null ? 1:10,
+                  maxLines: existingEntry == null ? 1 : 10,
                   decoration: InputDecoration(
                       labelText: 'Entry',
                       border: OutlineInputBorder(),
@@ -261,7 +255,10 @@ class _AddEntryTabState extends State<AddEntryTab> {
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
                 ),
                 if (currentPromptQuestions != null)
-                  PromptQuestions(questions: currentPromptQuestions),
+                  PromptQuestions(
+                    questions: currentPromptQuestions,
+                    onQuestionSelected: (String? s) => {_promptQuestion = s},
+                  ),
 
                 const SizedBox(height: 16),
                 Row(
@@ -282,7 +279,6 @@ class _AddEntryTabState extends State<AddEntryTab> {
     );
   }
 
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -292,7 +288,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   _AddEntryTabState(this.createOrUpdateEntryCallback, this._audioRecorder,
-      {this.existingEntry, this.onSubmitCallback,this.journalEntries}){
+      {this.existingEntry, this.onSubmitCallback, this.journalEntries}) {
     generatePromptQuestions();
   }
 
@@ -310,11 +306,11 @@ class _AddEntryTabState extends State<AddEntryTab> {
 
   generatePromptQuestions() {
     //Select past entries
-    if(journalEntries == null){
+    if (journalEntries == null) {
       return;
     }
     final entries = journalEntries!.value;
-    if(entries.length < 3){
+    if (entries.length < 3) {
       return;
     }
     // get last 10 entries
@@ -328,6 +324,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   }
 
   void insertGeneratedTitle() {
-    generateTitle(_entryController.text).then((value) => _titleController.text = value);
+    generateTitle(_entryController.text)
+        .then((value) => _titleController.text = value);
   }
 }

@@ -80,6 +80,16 @@ class JournalEntryView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if(entry.promptQuestion != null)
+                      Text(
+                        "In response to:",
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    if(entry.promptQuestion != null)
+                      Text(
+                        entry.promptQuestion!,
+                        style: TextStyle(color: CupertinoColors.inactiveGray),
+                      ),
                     if (entry.title != null && entry.title!.isNotEmpty)
                       Text(
                         entry.title!,

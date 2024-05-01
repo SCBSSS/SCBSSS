@@ -62,8 +62,8 @@ class _MainTabWidgetState extends State<MainTabWidget> {
         },
         physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-          AddEntryTab(createNewEntryCallback, _audioRecorder),
-          EntriesTab(journalEntries: journalEntries.value),
+          AddEntryTab(createOrUpdateEntry, _audioRecorder,journalEntries: journalEntries,),
+          EntriesTab(audioRecorder: _audioRecorder,journalEntries: journalEntries.value, createOrUpdateEntryCallback: createOrUpdateEntry),
           DataTab(),
           WellBeing(),
           SettingsTab(),

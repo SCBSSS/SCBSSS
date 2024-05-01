@@ -10,12 +10,19 @@ import 'package:flutter/cupertino.dart';
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
   final AudioRecorder audioRecorder;
-  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
 
-  const EntriesTab({required this.journalEntries, super.key, required this.audioRecorder, required this.createOrUpdateEntryCallback});
+  const EntriesTab(
+      {required this.journalEntries,
+      super.key,
+      required this.audioRecorder,
+      required this.createOrUpdateEntryCallback});
 
   @override
-  State<EntriesTab> createState() => _EntriesTabState(audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback);
+  State<EntriesTab> createState() => _EntriesTabState(
+      audioRecorder: audioRecorder,
+      createOrUpdateEntryCallback: createOrUpdateEntryCallback);
 }
 
 enum ViewType { timeline, calendar }
@@ -23,17 +30,28 @@ enum ViewType { timeline, calendar }
 class _EntriesTabState extends State<EntriesTab> {
   ViewType _viewType = ViewType.timeline; //default viewtype; timeline
   final AudioRecorder audioRecorder;
-  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
+  final int? selectedItem = null;
 
-  _EntriesTabState({required this.audioRecorder, required this.createOrUpdateEntryCallback});
-  
+  _EntriesTabState(
+      {required this.audioRecorder, required this.createOrUpdateEntryCallback});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildEntriesAppBar(),
       body: _viewType == ViewType.timeline
-          ? TimelineView(entries: widget.journalEntries, audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback)
-          : CalendarView(journalEntries: widget.journalEntries),
+          ? TimelineView(
+              entries: widget.journalEntries,
+              audioRecorder: audioRecorder,
+              createOrUpdateEntryCallback: createOrUpdateEntryCallback,
+              selectedItem: selectedItem,
+            )
+          : CalendarView(
+              journalEntries: widget.journalEntries,
+              audioRecorder: audioRecorder,
+              createOrUpdateEntryCallback: createOrUpdateEntryCallback),
     );
   }
 
@@ -74,38 +92,56 @@ class _EntriesTabState extends State<EntriesTab> {
       ],
     );
   }
-
 }
 
-class TimelineView extends StatelessWidget {
+class TimelineView extends StatefulWidget {
   final List<JournalEntry> shownEntries;
 
   final AudioRecorder audioRecorder;
-  final void Function(JournalEntry entry, bool isnewEntry) createOrUpdateEntryCallback;
-  TimelineView({required List<JournalEntry> entries,required this.audioRecorder,required this.createOrUpdateEntryCallback, super.key})
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
+  final int? selectedItem;
+
+  TimelineView(
+      {required List<JournalEntry> entries,
+      required this.audioRecorder,
+      required this.createOrUpdateEntryCallback,
+      super.key,
+      this.selectedItem})
       : shownEntries = entries
             .where((element) => element.title != null || element.entry != null)
             .toList(growable: false);
 
   @override
+  State<TimelineView> createState() => _TimelineViewState();
+}
+
+class _TimelineViewState extends State<TimelineView> {
+  int? selectedItem = null;
+
+  _TimelineViewState({this.selectedItem});
+
+  @override
   Widget build(BuildContext context) {
     return ListView.separated(
-        itemCount: shownEntries.length + 1,
+        itemCount: widget.shownEntries.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
             return const SizedBox.shrink();
           }
           index--;
-          final item = shownEntries[index];
-          return JournalEntryView(item,audioRecorder: audioRecorder, createOrUpdateEntryCallback: createOrUpdateEntryCallback);
+          final item = widget.shownEntries[index];
+          return JournalEntryView(item,
+              audioRecorder: widget.audioRecorder,
+              createOrUpdateEntryCallback: widget.createOrUpdateEntryCallback);
         },
         separatorBuilder: (context, index) {
           bool showDate = false;
-          var current = shownEntries[index].date;
+          var current = widget.shownEntries[index].date;
           if (index == 0) {
             showDate = true;
           } else {
-            var prev = shownEntries[index - 1].date;
+            var prev = widget.shownEntries[index - 1].date;
             showDate = !(current.year == prev.year &&
                 current.month == prev.month &&
                 current.day == prev.day);
@@ -140,13 +176,22 @@ class TimelineView extends StatelessWidget {
 
 class CalendarView extends StatefulWidget {
   final List<JournalEntry> journalEntries;
+  final AudioRecorder audioRecorder;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
 
   //calendar class
 
-  CalendarView({Key? key, required this.journalEntries}) : super(key: key);
+  CalendarView(
+      {Key? key,
+      required this.journalEntries,
+      required this.audioRecorder,
+      required this.createOrUpdateEntryCallback})
+      : super(key: key);
 
   @override
-  _CalendarViewState createState() => _CalendarViewState();
+  _CalendarViewState createState() =>
+      _CalendarViewState(this.audioRecorder, this.createOrUpdateEntryCallback);
 }
 
 class _CalendarViewState extends State<CalendarView> {
@@ -154,6 +199,9 @@ class _CalendarViewState extends State<CalendarView> {
   late CalendarFormat _calendarFormat; //month, weeks, two weeks view
   late DateTime _focusedDay; //current week, month, day
   DateTime? _selectedDay; //selected date
+  final AudioRecorder audioRecorder;
+  final void Function(JournalEntry entry, bool isnewEntry)
+      createOrUpdateEntryCallback;
 
   List<JournalEntry>? findJournalEntryForDate(DateTime date) {
     //  to find a journal entry within a specific date
@@ -216,8 +264,8 @@ class _CalendarViewState extends State<CalendarView> {
                   focusedDay: _selectedDay ?? firstDayOfMonth,
                   calendarFormat: CalendarFormat.month,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  headerStyle: HeaderStyle(
-                      formatButtonVisible: false), // Hides the format button
+                  headerStyle: HeaderStyle(formatButtonVisible: false),
+                  // Hides the format button
                   calendarBuilders: CalendarBuilders(
                     defaultBuilder: (context, day, focusedDay) {
                       bool hasEntries = datesWithEntries
@@ -247,21 +295,22 @@ class _CalendarViewState extends State<CalendarView> {
                       showModalBottomSheet(
                         context: context,
                         builder: (BuildContext context) {
-                          return Container(
-                              constraints: BoxConstraints(maxHeight: 400),
-                              decoration: BoxDecoration(color: Colors.white),
-                              child: ListView.separated(
-                                itemCount: entries.length,
-                                itemBuilder: (context, index) {
-                                  final item = entries[index];
-                                  return JournalEntryView(item);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider(
-                                      color:
-                                          Color.fromARGB(255, 226, 225, 228));
-                                },
-                              ));
+                          return Card(
+                            child: ListView.separated(
+                              itemCount: entries.length,
+                              itemBuilder: (context, index) {
+                                final item = entries[index];
+                                return JournalEntryView(item,
+                                    audioRecorder: audioRecorder,
+                                    createOrUpdateEntryCallback:
+                                        createOrUpdateEntryCallback);
+                              },
+                              separatorBuilder: (context, index) {
+                                return Divider(
+                                    color: Color.fromARGB(255, 226, 225, 228));
+                              },
+                            ),
+                          );
                         },
                       );
                     }
@@ -285,4 +334,9 @@ class _CalendarViewState extends State<CalendarView> {
     return moodEmojis[mood -
         1]; //so subtracting 1 from the mood gets the associated emoji we want
   }
+
+  _CalendarViewState(
+    this.audioRecorder,
+    this.createOrUpdateEntryCallback,
+  );
 }
