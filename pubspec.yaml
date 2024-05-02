@@ -42,9 +42,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   flutter_svg: ^2.0.10+1
   awesome_notifications: ^0.9.3+1
-  #flutter_local_notifications: ^8.2.0
   datetime_picker_formfield: ^2.0.0
-  #flutter_local_notifications: ^17.0.0
+  google_nav_bar: ^5.0.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -53,7 +52,7 @@ dependencies:
   permission_handler: ^11.3.0
   audio_session: ^0.1.18
   uuid: ^4.3.3
-
+  youtube_player_flutter: ^8.1.2
 
   http_parser: any
 dev_dependencies:

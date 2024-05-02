@@ -22,6 +22,11 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def flutterMinSdkVersion = localProperties.hasProperty('flutter.minSdkVersion') ? localProperties.hasProperty('flutter.minSdkVersion').toInteger() : null
+if (flutterMinSdkVersion == null) {
+    flutterMinSdkVersion = flutter.minSdkVersion
+}
+
 android {
     namespace "com.example.scbsss"
     compileSdkVersion 34

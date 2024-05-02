@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:path/path.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scbsss/models/journal_entry.dart';
@@ -12,8 +13,8 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   DatabaseService._init();
   Database? _database;
-  bool reSeed = bool.parse(dotenv.get('RE_SEED', fallback: 'false'),
-      caseSensitive: false);
+  bool reSeed = bool.parse(dotenv.get('RE_SEED', fallback: 'false'), caseSensitive: false);
+  int seedLevel = int.parse(dotenv.get('SEED_LEVEL', fallback: '1'));
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -128,45 +129,69 @@ class DatabaseService {
   Future<void> seedDatabase() async {
     print('seed | Started');
 
+    switch (seedLevel) {
+      case 1:
+        await seedDatabaseLevel1();
+        break;
+    };
+
+    print('seed | Finished');
+    return;
+  }
+
+  Future<void> seedDatabaseLevel1() async {
     final dummyJournalEntries = [
       JournalEntry(
           mood: 1,
-          title: "Day 1 of classes",
-          entry: "Classes went well",
+          title: "Academic Disappointment and Uncertainty",
+          entry: "I can't believe I failed my midterm. Prof. Johnson is so unfair! I studied all night, but the questions were nothing like what we covered in class. I'm so stressed out right now. What if I lose my scholarship?",
+          date: DateTime.now(),
+      ),
+      JournalEntry(
+          mood: 4,
+          title: "Sparks Fly at the Party",
+          entry: "Met the most amazing guy at the party last night! His name is Alex, and he's a senior in the business school. We talked for hours, and he even asked for my number. I think I'm falling for him already!",
           date: DateTime.now(),
       ),
       JournalEntry(
           mood: 3,
-          title: "Day 2 of classes",
-          entry: "Classes were okay",
+          title: "Achieving My Dream Internship",
+          entry: "I got the internship at the top marketing firm in the city! I can't believe it! All my hard work is finally paying off. This could be my big break. Mom and Dad will be so proud.",
+          date: DateTime.now(),
+    ),
+      JournalEntry(
+          mood: 1,
+          title: "The End of a Dream",
+          entry: "Alex broke up with me. He said he wasn't ready for a serious relationship. I'm devastated. How could he do this to me? I thought we had something special. I can't stop crying.",
+          date: DateTime.now(),
+    ),
+      JournalEntry(
+          mood: 3,
+          title: "Struggling to Cope After Heartbreak",
+          entry: "I don't know how I'm going to pass my finals. I've been so depressed since the breakup that I haven't been able to focus on studying. I'm falling behind in all my classes. What if I fail and lose everything I've worked so hard for?",
+          date: DateTime.now(),
+      ),
+      JournalEntry(
+          mood: 1,
+          title: "Loss of a Loved One: Coping with the Passing of My Furry Friend",
+          entry: "I'm extremely sad because my cat died today and I am in mourning.",
           date: DateTime.now(),
       ),
       JournalEntry(
           mood: 5,
-          title: "Day 3 of classes",
-          entry: "Classes were excellent",
-          date: DateTime.now(),
-    ),
-      JournalEntry(
-          mood: 2,
-          title: "Day 4 of classes",
-          entry: "Classes were not so good",
-          date: DateTime.now(),
-    ),
-      JournalEntry(
-          mood: 4,
-          title: "Day 5 of classes",
-          entry: "Classes were good",
+          title: "Academic Relief and Family Support",
+          entry: "My final exams are over and I did much better than I expected. I'm so happy to be back home with my parents. They're being very supportive and understanding of the difficulties I face this semester.",
           date: DateTime.now(),
       ),
     ];
 
+    int i = dummyJournalEntries.length;
+    int maxHour = DateTime.now().hour + 1;
     for (var journalEntry in dummyJournalEntries) {
+      journalEntry.date = DateTime.now().subtract(Duration(days: i--, hours: Random().nextInt(maxHour), minutes: Random().nextInt(60)));
+      sleep(const Duration(milliseconds: 10));
       await DatabaseService.instance.insertJournalEntry(journalEntry);
     }
-
-    print('seed | Finished');
-    return;
   }
 
   Future<int> insertJournalEntry(JournalEntry journalEntry) async {
@@ -213,5 +238,20 @@ class DatabaseService {
 
     return List.generate(
         result.length, (index) => Setting.fromMap(result[index]));
+  }
+
+  Future<List<JournalEntry>> getLatestJournalEntries(int count) async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.query(
+      'journal_entries',
+      orderBy: 'date DESC',
+      limit: count,
+    );
+
+    return List.generate(
+      result.length,
+          (index) => JournalEntry.fromMap(result[index]),
+    );
   }
 }

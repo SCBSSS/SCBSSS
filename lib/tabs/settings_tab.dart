@@ -9,7 +9,6 @@ class SettingsTab extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text(
             'Settings',
@@ -17,20 +16,20 @@ class SettingsTab extends StatelessWidget {
               fontFamily: 'Poppins',
               fontWeight: FontWeight.bold,
               fontSize: 25,
+              color: Colors.white,
             ),
           ),
-          backgroundColor: Colors.orange[300],
+          backgroundColor: Colors.black,
           elevation: 0,
           centerTitle: true,
           bottom: const TabBar(
-            indicatorColor: Colors.blue,
-            labelColor: Colors.blue,
+            indicatorColor: Color.fromARGB(255, 144, 199, 168),
+            labelColor: Color.fromARGB(255, 144, 199, 168),
+            unselectedLabelColor: Colors.white,
             isScrollable: false,
             labelPadding: EdgeInsets.all(0),
             labelStyle: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-            ),
+                fontWeight: FontWeight.w800, fontSize: 16, color: Colors.white),
             tabs: [
               Tab(text: 'General'),
               Tab(text: 'Account'),
@@ -38,19 +37,24 @@ class SettingsTab extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
-          children: [
-            GeneralSettings(),
-            Center(
-              child: Text(
-                'Account Settings',
-                style: TextStyle(color: Colors.lightBlueAccent),
-              ),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(255, 207, 233, 222)!,
+                Color.fromARGB(255, 205, 235, 237)!,
+              ],
             ),
-            Center(
-              child: NotificationsSettings(),
-            ),
-          ],
+          ),
+          child: const TabBarView(
+            children: [
+              GeneralSettings(),
+              Center(child: Text('Account Settings')),
+              NotificationsSettings(),
+            ],
+          ),
         ),
       ),
     );
@@ -107,6 +111,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                 child: Text(value),
               );
             }).toList(),
+          ),
+        ),
+        ListTile(
+          title: const Text('Data Backup'),
+          trailing: IconButton(
+            icon: const Icon(Icons.backup),
+            onPressed: () {
+              // Backup data
+            },
           ),
         ),
       ],
