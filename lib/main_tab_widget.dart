@@ -75,7 +75,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
             color: Colors.white,
             activeColor: Colors.white,
             tabBackgroundColor: Colors.grey.shade800,
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(14),
             gap: 12,
             tabs: const [
               GButton(icon: CupertinoIcons.add,
@@ -93,7 +93,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
               setState(() {
                 currentTabIndex = index;
               });
-              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut); 
+              _pageController.animateToPage(index, duration: Duration(milliseconds: 600), curve: Curves.linearToEaseOut);
             },
           ),
         ),
