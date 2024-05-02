@@ -1,6 +1,9 @@
 PODS:
   - audio_session (0.0.1):
     - Flutter
+  - awesome_notifications (0.9.3):
+    - Flutter
+    - IosAwnCore (~> 0.9.3)
   - Flutter (1.0.0)
   - flutter_inappwebview (0.0.1):
     - Flutter
@@ -13,6 +16,7 @@ PODS:
     - Flutter
     - flutter_sound_core (= 9.3.8)
   - flutter_sound_core (9.3.8)
+  - IosAwnCore (0.9.3)
   - OrderedSet (5.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
@@ -25,6 +29,7 @@ PODS:
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
+  - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
@@ -35,11 +40,14 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - flutter_sound_core
+    - IosAwnCore
     - OrderedSet
 
 EXTERNAL SOURCES:
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
+  awesome_notifications:
+    :path: ".symlinks/plugins/awesome_notifications/ios"
   Flutter:
     :path: Flutter
   flutter_inappwebview:
@@ -55,10 +63,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
+  awesome_notifications: 66d28ab7174ca2823b04d275cb043e0a4a3eb9cf
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_sound: a7e147e6bc858233631ed3140798ce840c28e22e
   flutter_sound_core: 6e4f3f2a77afc9d14babed2fa342c65dee1bdd87
+  IosAwnCore: b8601fbb37f7b3560f31b84ebf55a72f65812e05
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: 036b856153a2b1f61f21030ff725f3e6fece2b78
