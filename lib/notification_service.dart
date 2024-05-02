@@ -81,7 +81,9 @@ class _ScheduleNotificationScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: _showTimePicker,
+              onPressed: () => AwesomeNotifications()
+                .requestPermissionToSendNotifications()
+                .then((value) => _showTimePicker()),
               child: const Text('Select Time'),
             ),
             // Button to schedule the notification
