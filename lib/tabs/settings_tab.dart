@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:scbsss/notification_service.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -11,7 +11,8 @@ class SettingsTab extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Settings',
+          title: const Text(
+            'Settings',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.bold,
@@ -28,7 +29,8 @@ class SettingsTab extends StatelessWidget {
             labelPadding: EdgeInsets.all(0),
             labelStyle: TextStyle(
               fontWeight: FontWeight.w800,
-              fontSize: 16),
+              fontSize: 16,
+            ),
             tabs: [
               Tab(text: 'General'),
               Tab(text: 'Account'),
@@ -39,10 +41,15 @@ class SettingsTab extends StatelessWidget {
         body: const TabBarView(
           children: [
             GeneralSettings(),
-            Center(child: Text(
-              'Account Settings',
-            selectionColor: Colors.lightBlueAccent)),
-            Center(child: Text('Notification Settings')),
+            Center(
+              child: Text(
+                'Account Settings',
+                style: TextStyle(color: Colors.lightBlueAccent),
+              ),
+            ),
+            Center(
+              child: NotificationsSettings(),
+            ),
           ],
         ),
       ),
@@ -104,5 +111,37 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         ),
       ],
     );
+  }
+}
+
+class NotificationsSettings extends StatelessWidget {
+  const NotificationsSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ScheduleNotificationScreen()),
+              );
+            },
+            child: const Text('Schedule Notification'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showTestNotification() async {
+    createNotification(
+        id: 2,
+        title: 'Time for Mood Entry',
+        body: 'Testing testing'); // Call the createNotification method
   }
 }
