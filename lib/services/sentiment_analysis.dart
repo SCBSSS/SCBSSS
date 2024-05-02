@@ -30,6 +30,8 @@ Future<double> analyzeSentiment(String input) async {
     dynamic sentimentScore = responseData['documentSentiment']['score'];
     if (sentimentScore is int) {
       returnValue = sentimentScore.toDouble();
+    } else {
+      returnValue = sentimentScore;
     };
     print("Sentiment score: $returnValue");
 
