@@ -3,7 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 
 Future<void> initializeNotifications() async {
   AwesomeNotifications().initialize(
-    'resource://drawable/res_app_icon',
+    null,
     [
       NotificationChannel(
         channelKey: 'basic_channel',
