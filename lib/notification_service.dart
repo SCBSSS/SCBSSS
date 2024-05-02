@@ -3,7 +3,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 
 Future<void> initializeNotifications() async {
   AwesomeNotifications().initialize(
-    'resource://drawable/res_app_icon',
+    null,
     [
       NotificationChannel(
         channelKey: 'basic_channel',
@@ -81,7 +81,9 @@ class _ScheduleNotificationScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: _showTimePicker,
+              onPressed: () => AwesomeNotifications()
+                .requestPermissionToSendNotifications()
+                .then((value) => _showTimePicker()),
               child: const Text('Select Time'),
             ),
             // Button to schedule the notification
