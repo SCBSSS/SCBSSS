@@ -24,11 +24,16 @@ Future<double> analyzeSentiment(String input) async {
   );
 
   if (response.statusCode == 200) {
+    double returnValue = 0.0;
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     print(responseData.toString());
-    final double sentimentScore = responseData['documentSentiment']['score'];
-    print("Sentiment score: $sentimentScore");
-    return sentimentScore;
+    dynamic sentimentScore = responseData['documentSentiment']['score'];
+    if (sentimentScore is int) {
+      returnValue = sentimentScore.toDouble();
+    };
+    print("Sentiment score: $returnValue");
+
+    return returnValue;
   } else {
     throw Exception('Failed to analyze sentiment. Status code: ${response.statusCode}');
   }
