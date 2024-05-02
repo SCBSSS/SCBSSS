@@ -83,3 +83,25 @@ Future<String> searchMeditationVideo() async {
     throw Exception('Failed to search videos. Status code: ${response.statusCode}');
   }
 }
+
+Future<List<String>> apiGeneratePromptQuestions(List<String> entries) async {
+  final apiUrl = 'http://$_serverUrl/generate_questions';
+
+  try {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'past_entries': entries}),
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      return List<String>.from(jsonResponse);
+    } else {
+      final errorResponse = json.decode(response.body);
+      throw Exception('API Error: ${errorResponse['error']}');
+    }
+  } catch (e) {
+    throw Exception('Error generating prompt questions: $e');
+  }
+}
