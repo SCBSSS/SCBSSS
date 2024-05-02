@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:scbsss/notification_service.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -52,7 +52,7 @@ class SettingsTab extends StatelessWidget {
             children: [
               GeneralSettings(),
               Center(child: Text('Account Settings')),
-              Center(child: Text('Notification Settings')),
+              NotificationsSettings(),
             ],
           ),
         ),
@@ -127,7 +127,34 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 }
 
-//colors saved for bg gradient
-// Color.fromARGB(255, 219, 234, 220)!,
-// Color.fromARGB(255, 94, 137, 134)!,
-// Color.fromARGB(255, 99, 126, 100)!,],
+class NotificationsSettings extends StatelessWidget {
+  const NotificationsSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ScheduleNotificationScreen()),
+              );
+            },
+            child: const Text('Schedule Notification'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showTestNotification() async {
+    createNotification(
+        id: 2,
+        title: 'Time for Mood Entry',
+        body: 'Testing testing'); // Call the createNotification method
+  }
+}
