@@ -81,8 +81,31 @@ class _DataTabState extends State<DataTab> {
         ),
         actions: [
           GestureDetector(
-            onTap: (){
-
+            onTap: () {
+              showDialog(context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('What is the "Data" Tab?'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          Text(
+                              'This page is where SCBSSS shows your mood over time through a heat-map. \n\nP.S. There are more visuals to come.'
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Close'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             child: Container(
                 margin: EdgeInsets.all(10),
@@ -91,7 +114,7 @@ class _DataTabState extends State<DataTab> {
                 decoration: BoxDecoration(
                     color: Color(0xffF7F8F8),
                     borderRadius: BorderRadius.circular(16)),
-                child: Icon(CupertinoIcons.info_circle, size: 30,)
+                child: const Icon(CupertinoIcons.info_circle, size: 30,)
             ),
           ),
         ],
