@@ -16,7 +16,6 @@ Future<String> generateTitle(String entry) async {
     final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
-      print(response.body);
       final responseData = json.decode(response.body);
       final generatedTitle = responseData['summary'];
       return generatedTitle;
