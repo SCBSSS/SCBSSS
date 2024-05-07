@@ -192,7 +192,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 Text(
                   topText,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24),
+                  style: const TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -229,7 +229,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
                     Expanded(
                       child: TextFormField(
                         controller: _titleController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Title',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(
@@ -252,19 +252,17 @@ class _AddEntryTabState extends State<AddEntryTab> {
                       border: OutlineInputBorder(),
                       alignLabelWithHint: true,
                       contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 13)),
                 ),
                 if (currentPromptQuestions != null)
                   PromptQuestions(
                     questions: currentPromptQuestions,
                     onQuestionSelected: (String? s) => {_promptQuestion = s},
                   ),
-
-                const SizedBox(height: 16),
                 Row(
                   children: [
                     getRecordingButton(),
-                    SizedBox(width: 16),
+                    SizedBox(width: 10),
                     ElevatedButton(
                       onPressed: onSubmit,
                       child: Icon(CupertinoIcons.arrow_right),
