@@ -7,7 +7,7 @@ class SettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -32,7 +32,6 @@ class SettingsTab extends StatelessWidget {
                 fontWeight: FontWeight.w800, fontSize: 16, color: Colors.white),
             tabs: [
               Tab(text: 'General'),
-              Tab(text: 'Account'),
               Tab(text: 'Notifications'),
             ],
           ),
@@ -51,7 +50,6 @@ class SettingsTab extends StatelessWidget {
           child: const TabBarView(
             children: [
               GeneralSettings(),
-              Center(child: Text('Account Settings')),
               NotificationsSettings(),
             ],
           ),
@@ -77,15 +75,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        SwitchListTile(
-          title: const Text('Light Theme'),
-          value: _lightTheme,
-          onChanged: (bool value) {
-            setState(() {
-              _lightTheme = value;
-            });
-          },
-        ),
         SwitchListTile(
           title: const Text('Enable Notifications'),
           value: _notificationsEnabled,

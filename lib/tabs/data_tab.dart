@@ -19,39 +19,8 @@ class _DataTabState extends State<DataTab> {
         appBar: _buildMetricsAppBar(),
         backgroundColor: Colors.grey,
         body: Center(child: MyHeatMap()),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: const [
-              SizedBox(
-                height: 175,
-                child: DrawerHeader(
-                  margin: EdgeInsets.only(bottom:40),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent
-                  ),
-                  child:
-                    Text('Other Metrics',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    ),
-                ),
-              ),
-              ListTile(
-                title: Text('Heat Map'),
-              ),
-              ListTile(
-                title: Text('Word Frequency')
-              )
-            ]
-          ),
-
-            ),
-        ),
-      );
+      ),
+    );
   }
 
   AppBar _buildMetricsAppBar() {
@@ -66,23 +35,35 @@ class _DataTabState extends State<DataTab> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: (){
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffF7F8F8),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child:
-              Icon(CupertinoIcons.line_horizontal_3, size: 30,)
-          ),
-        ),
+        leading: null,
+        automaticallyImplyLeading: false,
         actions: [
           GestureDetector(
-            onTap: (){
-
+            onTap: () {
+              showDialog(context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('What is the "Data" Tab?'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          Text(
+                              'This page is where SCBSSS shows your mood over time through a heat-map. \n\nP.S. There are more visuals to come.'
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Close'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             child: Container(
                 margin: EdgeInsets.all(10),
@@ -91,7 +72,7 @@ class _DataTabState extends State<DataTab> {
                 decoration: BoxDecoration(
                     color: Color(0xffF7F8F8),
                     borderRadius: BorderRadius.circular(16)),
-                child: Icon(CupertinoIcons.info_circle, size: 30,)
+                child: const Icon(CupertinoIcons.info_circle, size: 30,)
             ),
           ),
         ],

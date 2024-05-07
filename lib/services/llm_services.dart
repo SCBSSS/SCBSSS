@@ -16,7 +16,6 @@ Future<String> generateTitle(String entry) async {
     final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
-      print(response.body);
       final responseData = json.decode(response.body);
       final generatedTitle = responseData['summary'];
       return generatedTitle;
@@ -28,59 +27,66 @@ Future<String> generateTitle(String entry) async {
   }
 }
 
-Future<String> searchMeditationVideo() async {
-  // get the 5 most recent entries from the DB
-  List<JournalEntry> entries = await DatabaseService.instance.getLatestJournalEntries(5);
+class MeditationVideoSearcher {
+  static const List<String> _stopWords = ['and', 'but', 'or', 'the', 'a', 'an', 'is', 'it', 'this', 'that'];
 
-  if (entries.isEmpty) {
-    throw Exception('No entries provided');
+  Future<String> searchMeditationVideo() async {
+    try {
+      var entries = await _getRecentJournalEntries(5);
+      if (entries.isEmpty) {
+        throw Exception('No entries provided');
+      }
+
+      var searchQuery = _buildSearchQuery(entries);
+      return await _fetchVideoIdFromYouTube(searchQuery);
+    } catch (e) {
+      throw Exception('Failed to search videos: ${e.toString()}');
+    }
   }
 
-  // define a list of stop words
-  var stopWords = ['and', 'but', 'or', 'the', 'a', 'an', 'is', 'it', 'this', 'that'];
+  Future<List<JournalEntry>> _getRecentJournalEntries(int count) async {
+    return DatabaseService.instance.getLatestJournalEntries(count);
+  }
 
-  // count # of times each word is said
-  var wordCounts = <String, int>{};
-  for (var journalEntry in entries) {
-    var words = journalEntry.entry?.split(' ');
-    for (var word in words!) {
-      // ignore the word if it's a stop word
-      if (!stopWords.contains(word)) {
-        wordCounts[word] = (wordCounts[word] ?? 0) + 1;
+  String _buildSearchQuery(List<JournalEntry> entries) {
+    var wordCounts = _countWords(entries);
+    var sortedWords = wordCounts.keys.toList()
+      ..sort((a, b) => wordCounts[b]!.compareTo(wordCounts[a]!));
+    var mostFrequentWords = sortedWords.take(5).toList();
+    return "meditation ${mostFrequentWords.join(' ')}";
+  }
+
+  Map<String, int> _countWords(List<JournalEntry> entries) {
+    var wordCounts = <String, int>{};
+    for (var entry in entries) {
+      var words = entry.entry?.toLowerCase().split(RegExp(r'\W+'));
+      for (var word in words!) {
+        if (!_stopWords.contains(word) && word.isNotEmpty) {
+          wordCounts[word] = (wordCounts[word] ?? 0) + 1;
+        }
       }
     }
+    return wordCounts;
   }
 
-  // get top 5 most used words
-  var sortedWords = wordCounts.keys.toList()
-    ..sort((a, b) => wordCounts[b]!.compareTo(wordCounts[a]!));
-  var mostFrequentWords = sortedWords.take(5).toList();
-
-  // make the search query
-  var searchQuery = "meditation${mostFrequentWords.join(' ')}";
-  print(searchQuery);
-  // query videos on youtube
-  var url = Uri.https('www.googleapis.com', '/youtube/v3/search', {
-    'key': _gcloudApiKey,
-    'q': searchQuery,
-    'part': 'id,snippet',
-    'maxResults': '1',
-    'type': 'video',
-  });
-
-  var response = await http.get(url);
-
-  if (response.statusCode == 200) {
-    var data = json.decode(response.body);
-    if (data['items'].isEmpty) {
-      throw Exception('No videos found');
+  Future<String> _fetchVideoIdFromYouTube(String query) async {
+    var url = Uri.https('www.googleapis.com', '/youtube/v3/search', {
+      'key': _gcloudApiKey,
+      'q': query,
+      'part': 'id,snippet',
+      'maxResults': '1',
+      'type': 'video',
+    });
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['items'].isEmpty) {
+        throw Exception('No videos found');
+      }
+      return data['items'][0]['id']['videoId'];
+    } else {
+      throw Exception('HTTP request failed with status ${response.statusCode}');
     }
-
-    // retrieve first video's ID
-    var videoId = data['items'][0]['id']['videoId'];
-    return videoId;
-  } else {
-    throw Exception('Failed to search videos. Status code: ${response.statusCode}');
   }
 }
 

@@ -218,6 +218,25 @@ class DatabaseService {
         result.length, (index) => JournalEntry.fromMap(result[index]));
   }
 
+  Future<Map<DateTime, int>> getAverageMoodByDay() async {
+    final db = await instance.database;
+
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT date, round(avg(mood)) as 'mood_average' FROM (
+        SELECT date(date) as 'date', mood
+        FROM journal_entries
+      ) GROUP BY date
+    ''');
+
+    Map<DateTime, int> returnValue = <DateTime, int> {};
+
+    for (int i = 0; i < result.length; i++) {
+      returnValue[DateTime.parse(result[i]['date'])] = result[i]['mood_average'].toInt();
+    }
+
+    return returnValue;
+  }
+
   Future<void> insertUser(User user) async {
     final db = await instance.database;
 
