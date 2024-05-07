@@ -246,13 +246,13 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 TextFormField(
                   controller: _entryController,
                   keyboardType: TextInputType.multiline, //many lines
-                  maxLines: existingEntry == null ? 1 : 10,
-                  decoration: InputDecoration(
+                  maxLines: 8,
+                  decoration: const InputDecoration(
                       labelText: 'Entry',
                       border: OutlineInputBorder(),
                       alignLabelWithHint: true,
                       contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
                 ),
                 if (currentPromptQuestions != null)
                   PromptQuestions(
