@@ -19,39 +19,8 @@ class _DataTabState extends State<DataTab> {
         appBar: _buildMetricsAppBar(),
         backgroundColor: Colors.grey,
         body: Center(child: MyHeatMap()),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: const [
-              SizedBox(
-                height: 175,
-                child: DrawerHeader(
-                  margin: EdgeInsets.only(bottom:40),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent
-                  ),
-                  child:
-                    Text('Other Metrics',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    ),
-                ),
-              ),
-              ListTile(
-                title: Text('Heat Map'),
-              ),
-              ListTile(
-                title: Text('Word Frequency')
-              )
-            ]
-          ),
-
-            ),
-        ),
-      );
+      ),
+    );
   }
 
   AppBar _buildMetricsAppBar() {
@@ -66,19 +35,8 @@ class _DataTabState extends State<DataTab> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: (){
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          child: Container(
-              decoration: BoxDecoration(
-                color: Color(0xffF7F8F8),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child:
-              Icon(CupertinoIcons.line_horizontal_3, size: 30,)
-          ),
-        ),
+        leading: null,
+        automaticallyImplyLeading: false,
         actions: [
           GestureDetector(
             onTap: () {
