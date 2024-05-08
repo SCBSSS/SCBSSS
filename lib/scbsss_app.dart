@@ -18,7 +18,7 @@ class _SCBSSSState extends State<SCBSSSApp> {
   bool isSetupDone = false;
   bool isLoading = true;
   JournalManager journalManager = JournalManager();
-  AudioRecorder audioRecorder = AudioRecorder();
+  RecordingService audioRecorder = RecordingService();
 
   void completeSetup() {
     setState(() {

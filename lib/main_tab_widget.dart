@@ -13,14 +13,14 @@ class MainTabWidget extends StatefulWidget {
   final void Function(JournalEntry entry) createNewEntryCallback;
   final void Function(JournalEntry entry) updateEntryCallback;
   final ValueNotifier<List<JournalEntry>> journalEntries;
-  final AudioRecorder _audioRecorder;
+  final RecordingService _audioRecorder;
 
   MainTabWidget({
     Key? key,
     required this.updateEntryCallback,
     required this.createNewEntryCallback,
     required this.journalEntries,
-    required AudioRecorder audioRecorder,
+    required RecordingService audioRecorder,
   })  : _audioRecorder = audioRecorder,
         super(key: key);
 
@@ -34,7 +34,7 @@ class _MainTabWidgetState extends State<MainTabWidget> {
   final void Function(JournalEntry entry) createNewEntryCallback;
   final void Function(JournalEntry entry) updateEntryCallback;
   int currentTabIndex = 0;
-  final AudioRecorder _audioRecorder;
+  final RecordingService _audioRecorder;
   late PageController _pageController;
 
   _MainTabWidgetState(this.createNewEntryCallback,this.updateEntryCallback, this.journalEntries, this._audioRecorder) {

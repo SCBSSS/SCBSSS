@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 
 class EntriesTab extends StatefulWidget {
   final List<JournalEntry> journalEntries;
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
 
@@ -29,7 +29,7 @@ enum ViewType { timeline, calendar }
 
 class _EntriesTabState extends State<EntriesTab> {
   ViewType _viewType = ViewType.timeline; //default viewtype; timeline
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
   final int? selectedItem = null;
@@ -97,7 +97,7 @@ class _EntriesTabState extends State<EntriesTab> {
 class TimelineView extends StatefulWidget {
   final List<JournalEntry> shownEntries;
 
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
   final int? selectedItem;
@@ -176,7 +176,7 @@ class _TimelineViewState extends State<TimelineView> {
 
 class CalendarView extends StatefulWidget {
   final List<JournalEntry> journalEntries;
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
 
@@ -199,7 +199,7 @@ class _CalendarViewState extends State<CalendarView> {
   late CalendarFormat _calendarFormat; //month, weeks, two weeks view
   late DateTime _focusedDay; //current week, month, day
   DateTime? _selectedDay; //selected date
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
 
