@@ -30,7 +30,6 @@ class DatabaseService {
 
   Future<Database> _initDB(String dbName) async {
     final databasesPath = await getDatabasesPath();
-    print("dbPath: "+databasesPath);
     final dbPath = join(databasesPath, dbName);
 
     if (reSeed) {

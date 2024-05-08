@@ -8,7 +8,7 @@ import 'package:scbsss/tabs/add_entry_tab.dart';
 import '../services/audio_recorder.dart';
 
 class JournalEntryView extends StatelessWidget {
-  final AudioRecorder audioRecorder;
+  final RecordingService audioRecorder;
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
   final JournalEntry entry;

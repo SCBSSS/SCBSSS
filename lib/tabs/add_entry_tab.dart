@@ -12,7 +12,7 @@ import '../views/prompt_quesions_view.dart';
 class AddEntryTab extends StatefulWidget {
   final void Function(JournalEntry entry, bool isnewEntry)
       createOrUpdateEntryCallback;
-  final AudioRecorder _audioRecorder;
+  final RecordingService _audioRecorder;
   final AudioTranscription _audioTranscription;
   final ValueNotifier<List<JournalEntry>>? journalEntries;
   final JournalEntry? existingEntry;
@@ -42,7 +42,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   final _entryController = TextEditingController();
   final _contentController = TextEditingController();
   double _currentMoodValue = 3;
-  final AudioRecorder _audioRecorder;
+  final RecordingService _audioRecorder;
   var currentRecordingPath = "";
   var recordingState = RecordingState.ready;
   List<String>? promptQuestions = null;
@@ -137,7 +137,7 @@ class _AddEntryTabState extends State<AddEntryTab> {
   void handleTranscribeButton() async {
     switch (recordingState) {
       case RecordingState.recording:
-        await _audioRecorder.stopRecorder();
+        await _audioRecorder.stopRecording();
         setState(() {
           recordingState = RecordingState.transcribing;
         });
@@ -161,10 +161,13 @@ class _AddEntryTabState extends State<AddEntryTab> {
       case RecordingState.transcribing:
         break;
       case RecordingState.ready:
-        currentRecordingPath = await _audioRecorder.record();
-        setState(() {
-          recordingState = RecordingState.recording;
-        });
+        final filePath = await _audioRecorder.startRecording();
+        if(filePath != null){
+          currentRecordingPath = filePath;
+          setState(() {
+            recordingState = RecordingState.recording;
+          });
+        }
         break;
     }
   }
