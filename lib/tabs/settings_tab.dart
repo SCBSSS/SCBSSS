@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:scbsss/notification_service.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -7,7 +7,7 @@ class SettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -32,7 +32,6 @@ class SettingsTab extends StatelessWidget {
                 fontWeight: FontWeight.w800, fontSize: 16, color: Colors.white),
             tabs: [
               Tab(text: 'General'),
-              Tab(text: 'Account'),
               Tab(text: 'Notifications'),
             ],
           ),
@@ -51,8 +50,7 @@ class SettingsTab extends StatelessWidget {
           child: const TabBarView(
             children: [
               GeneralSettings(),
-              Center(child: Text('Account Settings')),
-              Center(child: Text('Notification Settings')),
+              NotificationsSettings(),
             ],
           ),
         ),
@@ -77,15 +75,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        SwitchListTile(
-          title: const Text('Light Theme'),
-          value: _lightTheme,
-          onChanged: (bool value) {
-            setState(() {
-              _lightTheme = value;
-            });
-          },
-        ),
         SwitchListTile(
           title: const Text('Enable Notifications'),
           value: _notificationsEnabled,
@@ -127,7 +116,34 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 }
 
-//colors saved for bg gradient
-// Color.fromARGB(255, 219, 234, 220)!,
-// Color.fromARGB(255, 94, 137, 134)!,
-// Color.fromARGB(255, 99, 126, 100)!,],
+class NotificationsSettings extends StatelessWidget {
+  const NotificationsSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ScheduleNotificationScreen()),
+              );
+            },
+            child: const Text('Schedule Notification'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showTestNotification() async {
+    createNotification(
+        id: 2,
+        title: 'Time for Mood Entry',
+        body: 'Testing testing'); // Call the createNotification method
+  }
+}
