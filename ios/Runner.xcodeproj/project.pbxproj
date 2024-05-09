@@ -499,35 +499,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"IosAwnCore\"",
-					"-framework",
-					"\"MediaPlayer\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"audio_session\"",
-					"-framework",
-					"\"awesome_notifications\"",
-					"-framework",
-					"\"flutter_inappwebview\"",
-					"-framework",
-					"\"flutter_sound\"",
-					"-framework",
-					"\"flutter_sound_core\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"sqflite\"",
-					"-lc++",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scbsss.scbsss;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -714,35 +685,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"IosAwnCore\"",
-					"-framework",
-					"\"MediaPlayer\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"audio_session\"",
-					"-framework",
-					"\"awesome_notifications\"",
-					"-framework",
-					"\"flutter_inappwebview\"",
-					"-framework",
-					"\"flutter_sound\"",
-					"-framework",
-					"\"flutter_sound_core\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"sqflite\"",
-					"-lc++",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scbsss.scbsss;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -772,35 +714,6 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-ObjC",
-					"-framework",
-					"\"AVFoundation\"",
-					"-framework",
-					"\"IosAwnCore\"",
-					"-framework",
-					"\"MediaPlayer\"",
-					"-framework",
-					"\"OrderedSet\"",
-					"-framework",
-					"\"audio_session\"",
-					"-framework",
-					"\"awesome_notifications\"",
-					"-framework",
-					"\"flutter_inappwebview\"",
-					"-framework",
-					"\"flutter_sound\"",
-					"-framework",
-					"\"flutter_sound_core\"",
-					"-framework",
-					"\"path_provider_foundation\"",
-					"-framework",
-					"\"permission_handler_apple\"",
-					"-framework",
-					"\"sqflite\"",
-					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.scbsss.scbsss;
 				PRODUCT_NAME = "$(TARGET_NAME)";
