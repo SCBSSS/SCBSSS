@@ -231,6 +231,9 @@ class _AddEntryTabState extends State<AddEntryTab> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        onTapOutside: (e) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
                         controller: _titleController,
                         decoration: const InputDecoration(
                             labelText: 'Title',
@@ -247,6 +250,9 @@ class _AddEntryTabState extends State<AddEntryTab> {
                 const SizedBox(height: 20),
                 //entry text fields
                 TextFormField(
+                  onTapOutside: (e) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
                   controller: _entryController,
                   keyboardType: TextInputType.multiline, //many lines
                   maxLines: 8,
